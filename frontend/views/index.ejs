@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" ng-app="clothesStore">
+  <head>
+    <meta charset="utf-8">
+    <title>Clothes Store</title>
+    <link rel="stylesheet" href="public/bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="public/css/app.css">
+    <script src="public/bower_components/angular/angular.js"></script>
+    <script src="public/bower_components/angular-route/angular-route.js"></script>
+    <script src="public/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="public/bower_components/jquery/dist/jquery.js"></script>
+    <script src="public/bower_components/angular-mocks/angular-mocks.js"></script>
+    <script src="public/js/app.js"></script>
+    <script src="public/js/storeController.js"></script>
+  </head>
+  <body ng-controller="StoreController">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <a id="brand" class="navbar-brand" href="/#/">Clothes Store</a>
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <input id="search-input" type="text" ng-model="query" class="form-control" placeholder="Search">
+          <span id="cart-badge" class="active"><a href="/#/" class="badge glyphicon glyphicon-shopping-cart">Cart</a></span>
+        </div>
+      </form>
+    </div>
+  </nav>
+  <div ng-view></div>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+[
+  {
+    "name": "Almond Toe Court Shoes",
+    "colour": "Patent Black",
+    "category": "Women's Footwear",
+    "price": 99.00,
+    "image": "public/images/black_shoe.jpg",
+    "quantity": 5,
+    "canPurchase": true
+  },
+  {
+    "name": "Suede Shoes",
+    "colour": "Blue",
+    "category": "Women's Footwear",
+    "price": 42.00,
+    "image": "public/images/blue_suede.jpg",
+    "quantity": 4,
+    "canPurchase": true
+  },
+  {
+    "name": "Leather Driver Saddle Loafers",
+    "colour": "Tan",
+    "category": "Men's Footwear",
+    "price": 34.00,
+    "image": "public/images/saddle_loafers.jpg",
+    "quantity": 12,
+    "canPurchase": true
+  },
+  {
+    "name": "Flip Flops - Red",
+    "colour": "Red",
+    "category": "Men's Footwear",
+    "price": 19.00,
+    "image": "public/images/red_flip_flops.jpg",
+    "quantity": 6,
+    "canPurchase": true
+  },
+  {
+    "name": "Flip Flops - Blue",
+    "colour": "Blue",
+    "category": "Men's Footwear",
+    "price": 19.00,
+    "image": "public/images/blue_flip_flops.jpg",
+    "quantity": 0,
+    "canPurchase": true
+  },
+  {
+    "name": "Gold Button Cardigan",
+    "colour": "Black",
+    "category": "Women's Casualwear",
+    "price": 167.00,
+    "image": "public/images/gold_button_cardigan.jpg",
+    "quantity": 6,
+    "canPurchase": true
+  },
+  {
+    "name": "Cotton Shorts",
+    "colour": "Medium Red",
+    "category": "Women's Casualwear",
+    "price": 30.00,
+    "image": "public/images/red_cotton_shorts.jpg",
+    "quantity": 5,
+    "canPurchase": true
+  },
+  {
+    "name": "Fine Stripe Short Sleeve Shirt",
+    "colour": "Grey",
+    "category": "Men's Casualwear",
+    "image": "public/images/grey_stripe_shirt.jpg",
+    "price": 49.00,
+    "quantity": 9,
+    "canPurchase": true
+  },
+  {
+    "name": "Fine Stripe Short Sleeve Shirt",
+    "colour": "Green - Was £49.99!",
+    "category": "Men's Casualwear",
+    "image": "public/images/green_stripe_shirt.jpg",
+    "price": 39.99,
+    "quantity": 3,
+    "canPurchase": true
+  },
+  {
+    "name": "Sharkskin Waistcoat",
+    "colour": "Charcoal",
+    "category": "Men's Formalwear",
+    "image": "public/images/waistcoat.jpg",
+    "price": 75.00,
+    "quantity": 2,
+    "canPurchase": true
+  },
+  {
+    "name": "Lightweight Patch Pocket Blazer",
+    "colour": "Deer",
+    "category": "Men's Formalwear",
+    "price": 175.50,
+    "image": "public/images/blazer.jpg",
+    "quantity": 1,
+    "canPurchase": true
+  },
+  {
+    "name": "Bird Print Dress",
+    "colour": "Black",
+    "category": "Women's Formalwear",
+    "price": 270.00,
+    "image": "public/images/bird_print_dress.jpg",
+    "quantity": 10,
+    "canPurchase": true
+  },
+  {
+    "name": "Mid Twist Cut-Out Dress",
+    "colour": "Pink",
+    "category": "Women's Formalwear",
+    "price": 540.00,
+    "image": "public/images/mid_twist_dress.jpg",
+    "quantity": 5,
+    "canPurchase": true
+  }
+]
