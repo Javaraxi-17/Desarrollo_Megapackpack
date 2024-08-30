@@ -1,753 +1,856 @@
 const db = require('../config/db.config.js');
-const Customer = db.Customer;
-const Product = db.Product;
-const Supplier = db.Supplier;
-const Employee = db.Employee;
+const Categoria = db.Categoria;
+const Producto = db.Producto;
+const Rol = db.Rol;
+const Usuario = db.Usuario;
+const Cliente = db.Cliente;
+const Pedido = db.Pedido;
+const DetallePedido = db.DetallePedido;
 
-// Controladores para Customer
-
-exports.create = (req, res) => {
-    let customer = {};
-
+// Controladores para Categoria
+exports.createCategoria = (req, res) => {
+    let categoria = {};
     try {
-        // Building Customer object from uploading request's body
-        customer.firstname = req.body.firstname;
-        customer.lastname = req.body.lastname;
-        customer.address = req.body.address;
-        customer.age = req.body.age;
+        categoria.nombre = req.body.nombre;
 
-        // Save to MySQL database
-        Customer.create(customer).then(result => {
-            // send uploading message to client
+        Categoria.create(categoria).then(result => {
             res.status(200).json({
-                message: "Upload Successfully a Customer with id = " + result.id,
-                customer: result,
+                message: "Categoría creada con éxito con id = " + result.id_categoria,
+                categoria: result,
             });
         });
     } catch (error) {
         res.status(500).json({
-            message: "Fail!",
+            message: "Error!",
             error: error.message
         });
     }
-}
+};
 
-exports.retrieveAllCustomers = (req, res) => {
-    // find all Customer information from
-    Customer.findAll()
-        .then(customerInfos => {
+exports.retrieveAllCategorias = (req, res) => {
+    Categoria.findAll()
+        .then(categoriaInfos => {
             res.status(200).json({
-                message: "Get all Customers' Infos Successfully!",
-                customers: customerInfos
+                message: "Categorías recuperadas con éxito!",
+                categorias: categoriaInfos
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.getCustomerById = (req, res) => {
-    // find all Customer information from
-    let customerId = req.params.id;
-    Customer.findByPk(customerId)
-        .then(customer => {
+exports.getCategoriaById = (req, res) => {
+    let categoriaId = req.params.id;
+    Categoria.findByPk(categoriaId)
+        .then(categoria => {
             res.status(200).json({
-                message: " Successfully Get a Customer with id = " + customerId,
-                customers: customer
+                message: "Categoría recuperada con éxito con id = " + categoriaId,
+                categoria: categoria
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.filteringByAge = (req, res) => {
-    let age = req.query.age;
-
-    Customer.findAll({
-        attributes: ['id', 'firstname', 'lastname', 'age', 'address', 'copyrightby'],
-        where: { age: age }
-    })
-        .then(results => {
-            res.status(200).json({
-                message: "Get all Customers with age = " + age,
-                customers: results,
-            });
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-}
-
-exports.pagination = (req, res) => {
+exports.updateCategoriaById = async (req, res) => {
     try {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
+        let categoriaId = req.params.id;
+        let categoria = await Categoria.findByPk(categoriaId);
 
-        const offset = page ? page * limit : 0;
-
-        Customer.findAndCountAll({ limit: limit, offset: offset })
-            .then(data => {
-                const totalPages = Math.ceil(data.count / limit);
-                const response = {
-                    message: "Paginating is completed! Query parameters: page = " + page + ", limit = " + limit,
-                    data: {
-                        "copyrightby": "UMG ANTIGUA",
-                        "totalItems": data.count,
-                        "totalPages": totalPages,
-                        "limit": limit,
-                        "currentPageNumber": page + 1,
-                        "currentPageSize": data.rows.length,
-                        "customers": data.rows
-                    }
-                };
-                res.send(response);
-            });
-    } catch (error) {
-        res.status(500).send({
-            message: "Error -> Can NOT complete a paging request!",
-            error: error.message,
-        });
-    }
-}
-
-exports.pagingfilteringsorting = (req, res) => {
-    try {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
-        let age = parseInt(req.query.age);
-
-        const offset = page ? page * limit : 0;
-
-        console.log("offset = " + offset);
-
-        Customer.findAndCountAll({
-            attributes: ['id', 'firstname', 'lastname', 'age', 'address'],
-            where: { age: age },
-            order: [
-                ['firstname', 'ASC'],
-                ['lastname', 'DESC']
-            ],
-            limit: limit,
-            offset: offset
-        })
-            .then(data => {
-                const totalPages = Math.ceil(data.count / limit);
-                const response = {
-                    message: "Pagination Filtering Sorting request is completed! Query parameters: page = " + page + ", limit = " + limit + ", age = " + age,
-                    data: {
-                        "copyrightby": "UmgAntigua",
-                        "totalItems": data.count,
-                        "totalPages": totalPages,
-                        "limit": limit,
-                        "age-filtering": age,
-                        "currentPageNumber": page + 1,
-                        "currentPageSize": data.rows.length,
-                        "customers": data.rows
-                    }
-                };
-                res.send(response);
-            });
-    } catch (error) {
-        res.status(500).send({
-            message: "Error -> Can NOT complete a paging request!",
-            error: error.message,
-        });
-    }
-}
-
-exports.updateById = async (req, res) => {
-    try {
-        let customerId = req.params.id;
-        let customer = await Customer.findByPk(customerId);
-
-        if (!customer) {
-            // return a response to client
+        if (!categoria) {
             res.status(404).json({
-                message: "Not Found for updating a customer with id = " + customerId,
-                customer: "",
+                message: "No se encontró la categoría para actualizar con id = " + categoriaId,
+                categoria: "",
                 error: "404"
             });
         } else {
-            // update new change to database
             let updatedObject = {
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                address: req.body.address,
-                age: req.body.age
-            }
-            let result = await Customer.update(updatedObject, { returning: true, where: { id: customerId } });
+                nombre: req.body.nombre
+            };
+            let result = await Categoria.update(updatedObject, { returning: true, where: { id_categoria: categoriaId } });
 
-            // return the response to client
             if (!result) {
                 res.status(500).json({
-                    message: "Error -> Can not update a customer with id = " + req.params.id,
-                    error: "Can NOT Updated",
+                    message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
+                    error: "No se pudo actualizar",
                 });
             }
 
             res.status(200).json({
-                message: "Update successfully a Customer with id = " + customerId,
-                customer: updatedObject,
+                message: "Categoría actualizada con éxito con id = " + categoriaId,
+                categoria: updatedObject,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can not update a customer with id = " + req.params.id,
+            message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
             error: error.message
         });
     }
-}
+};
 
-exports.deleteById = async (req, res) => {
+exports.deleteCategoriaById = async (req, res) => {
     try {
-        let customerId = req.params.id;
-        let customer = await Customer.findByPk(customerId);
+        let categoriaId = req.params.id;
+        let categoria = await Categoria.findByPk(categoriaId);
 
-        if (!customer) {
+        if (!categoria) {
             res.status(404).json({
-                message: "Does Not exist a Customer with id = " + customerId,
+                message: "No existe una categoría con id = " + categoriaId,
                 error: "404",
             });
         } else {
-            await customer.destroy();
+            await categoria.destroy();
             res.status(200).json({
-                message: "Delete Successfully a Customer with id = " + customerId,
-                customer: customer,
+                message: "Categoría eliminada con éxito con id = " + categoriaId,
+                categoria: categoria,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can NOT delete a customer with id = " + req.params.id,
+            message: "Error -> No se puede eliminar la categoría con id = " + req.params.id,
             error: error.message,
         });
     }
-}
+};
 
-// Controladores para Product
-
+// Controladores para Producto
 exports.createProduct = (req, res) => {
     let product = {};
 
     try {
-        // Building Product object from uploading request's body
-        product.name = req.body.name;
-        product.description = req.body.description;
-        product.price = req.body.price;
+        product.nombre = req.body.nombre;
+        product.descripcion = req.body.descripcion;
+        product.precio = req.body.precio;
+        product.id_categoria = req.body.id_categoria;
         product.stock = req.body.stock;
+        product.es_mayorista = req.body.es_mayorista;
 
-        // Save to MySQL database
-        Product.create(product).then(result => {
-            // send uploading message to client
+        Producto.create(product).then(result => {
             res.status(200).json({
-                message: "Upload Successfully a Product with id = " + result.id,
-                product: result,
+                message: "Producto creado con éxito con id = " + result.id_producto,
+                producto: result,
             });
         });
     } catch (error) {
         res.status(500).json({
-            message: "Fail!",
+            message: "Error!",
             error: error.message
         });
     }
-}
+};
 
 exports.retrieveAllProducts = (req, res) => {
-    // find all Product information from
-    Product.findAll()
+    Producto.findAll()
         .then(productInfos => {
             res.status(200).json({
-                message: "Get all Products' Infos Successfully!",
-                products: productInfos
+                message: "Productos recuperados con éxito!",
+                productos: productInfos
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
 exports.getProductById = (req, res) => {
-    // find all Product information from
     let productId = req.params.id;
-    Product.findByPk(productId)
+    Producto.findByPk(productId)
         .then(product => {
             res.status(200).json({
-                message: " Successfully Get a Product with id = " + productId,
-                products: product
+                message: "Producto recuperado con éxito con id = " + productId,
+                producto: product
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
-
-exports.filterProductsByPrice = (req, res) => {
-    let price = req.query.price;
-
-    Product.findAll({
-        attributes: ['id', 'name', 'description', 'price', 'stock'],
-        where: { price: price }
-    })
-        .then(results => {
-            res.status(200).json({
-                message: "Get all Products with price = " + price,
-                products: results,
-            });
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-}
-
-exports.paginationProducts = (req, res) => {
-    try {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
-
-        const offset = page ? page * limit : 0;
-
-        Product.findAndCountAll({ limit: limit, offset: offset })
-            .then(data => {
-                const totalPages = Math.ceil(data.count / limit);
-                const response = {
-                    message: "Paginating is completed! Query parameters: page = " + page + ", limit = " + limit,
-                    data: {
-                        "copyrightby": "UMG ANTIGUA",
-                        "totalItems": data.count,
-                        "totalPages": totalPages,
-                        "limit": limit,
-                        "currentPageNumber": page + 1,
-                        "currentPageSize": data.rows.length,
-                        "products": data.rows
-                    }
-                };
-                res.send(response);
-            });
-    } catch (error) {
-        res.status(500).send({
-            message: "Error -> Can NOT complete a paging request!",
-            error: error.message,
-        });
-    }
-}
-
-exports.pagingFilteringSortingProducts = (req, res) => {
-    try {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
-        let price = parseInt(req.query.price);
-
-        const offset = page ? page * limit : 0;
-
-        console.log("offset = " + offset);
-
-        Product.findAndCountAll({
-            attributes: ['id', 'name', 'description', 'price', 'stock'],
-            where: { price: price },
-            order: [
-                ['name', 'ASC'],
-                ['description', 'DESC']
-            ],
-            limit: limit,
-            offset: offset
-        })
-            .then(data => {
-                const totalPages = Math.ceil(data.count / limit);
-                const response = {
-                    message: "Pagination Filtering Sorting request is completed! Query parameters: page = " + page + ", limit = " + limit + ", price = " + price,
-                    data: {
-                        "copyrightby": "UmgAntigua",
-                        "totalItems": data.count,
-                        "totalPages": totalPages,
-                        "limit": limit,
-                        "price-filtering": price,
-                        "currentPageNumber": page + 1,
-                        "currentPageSize": data.rows.length,
-                        "products": data.rows
-                    }
-                };
-                res.send(response);
-            });
-    } catch (error) {
-        res.status(500).send({
-            message: "Error -> Can NOT complete a paging request!",
-            error: error.message,
-        });
-    }
-}
+};
 
 exports.updateProductById = async (req, res) => {
     try {
         let productId = req.params.id;
-        let product = await Product.findByPk(productId);
+        let product = await Producto.findByPk(productId);
 
         if (!product) {
-            // return a response to client
             res.status(404).json({
-                message: "Not Found for updating a product with id = " + productId,
-                product: "",
+                message: "No se encontró el producto para actualizar con id = " + productId,
+                producto: "",
                 error: "404"
             });
         } else {
-            // update new change to database
             let updatedObject = {
-                name: req.body.name,
-                description: req.body.description,
-                price: req.body.price,
-                stock: req.body.stock
-            }
-            let result = await Product.update(updatedObject, { returning: true, where: { id: productId } });
+                nombre: req.body.nombre,
+                descripcion: req.body.descripcion,
+                precio: req.body.precio,
+                id_categoria: req.body.id_categoria,
+                stock: req.body.stock,
+                es_mayorista: req.body.es_mayorista
+            };
+            let result = await Producto.update(updatedObject, { returning: true, where: { id_producto: productId } });
 
-            // return the response to client
             if (!result) {
                 res.status(500).json({
-                    message: "Error -> Can not update a product with id = " + req.params.id,
-                    error: "Can NOT Updated",
+                    message: "Error -> No se puede actualizar el producto con id = " + req.params.id,
+                    error: "No se pudo actualizar",
                 });
             }
 
             res.status(200).json({
-                message: "Update successfully a Product with id = " + productId,
-                product: updatedObject,
+                message: "Producto actualizado con éxito con id = " + productId,
+                producto: updatedObject,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can not update a product with id = " + req.params.id,
+            message: "Error -> No se puede actualizar el producto con id = " + req.params.id,
             error: error.message
         });
     }
-}
+};
 
 exports.deleteProductById = async (req, res) => {
     try {
         let productId = req.params.id;
-        let product = await Product.findByPk(productId);
+        let product = await Producto.findByPk(productId);
 
         if (!product) {
             res.status(404).json({
-                message: "Does Not exist a Product with id = " + productId,
+                message: "No existe un producto con id = " + productId,
                 error: "404",
             });
         } else {
             await product.destroy();
             res.status(200).json({
-                message: "Delete Successfully a Product with id = " + productId,
-                product: product,
+                message: "Producto eliminado con éxito con id = " + productId,
+                producto: product,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can NOT delete a product with id = " + req.params.id,
+            message: "Error -> No se puede eliminar el producto con id = " + req.params.id,
             error: error.message,
         });
     }
-}
+};
 
-// Controladores para Supplier
-
-exports.createSupplier = (req, res) => {
-    let supplier = {};
-
+// Controladores para Rol
+exports.createRol = (req, res) => {
+    let rol = {};
     try {
-        // Building Supplier object from uploading request's body
-        supplier.name = req.body.name;
-        supplier.contact = req.body.contact;
-        supplier.address = req.body.address;
-        supplier.phone = req.body.phone;
+        rol.nombre = req.body.nombre;
 
-        // Save to MySQL database
-        Supplier.create(supplier).then(result => {
-            // send uploading message to client
+        Rol.create(rol).then(result => {
             res.status(200).json({
-                message: "Upload Successfully a Supplier with id = " + result.id,
-                supplier: result,
+                message: "Rol creado con éxito con id = " + result.id_rol,
+                rol: result,
             });
         });
     } catch (error) {
         res.status(500).json({
-            message: "Fail!",
+            message: "Error!",
             error: error.message
         });
     }
-}
+};
 
-exports.retrieveAllSuppliers = (req, res) => {
-    // find all Supplier information from
-    Supplier.findAll()
-        .then(supplierInfos => {
+exports.retrieveAllRoles = (req, res) => {
+    Rol.findAll()
+        .then(rolInfos => {
             res.status(200).json({
-                message: "Get all Suppliers' Infos Successfully!",
-                suppliers: supplierInfos
+                message: "Roles recuperados con éxito!",
+                roles: rolInfos
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.getSupplierById = (req, res) => {
-    // find all Supplier information from
-    let supplierId = req.params.id;
-    Supplier.findByPk(supplierId)
-        .then(supplier => {
+exports.getRolById = (req, res) => {
+    let rolId = req.params.id;
+    Rol.findByPk(rolId)
+        .then(rol => {
             res.status(200).json({
-                message: " Successfully Get a Supplier with id = " + supplierId,
-                suppliers: supplier
+                message: "Rol recuperado con éxito con id = " + rolId,
+                rol: rol
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.updateSupplierById = async (req, res) => {
+exports.updateRolById = async (req, res) => {
     try {
-        let supplierId = req.params.id;
-        let supplier = await Supplier.findByPk(supplierId);
+        let rolId = req.params.id;
+        let rol = await Rol.findByPk(rolId);
 
-        if (!supplier) {
-            // return a response to client
+        if (!rol) {
             res.status(404).json({
-                message: "Not Found for updating a supplier with id = " + supplierId,
-                supplier: "",
+                message: "No se encontró el rol para actualizar con id = " + rolId,
+                rol: "",
                 error: "404"
             });
         } else {
-            // update new change to database
             let updatedObject = {
-                name: req.body.name,
-                contact: req.body.contact,
-                address: req.body.address,
-                phone: req.body.phone
-            }
-            let result = await Supplier.update(updatedObject, { returning: true, where: { id: supplierId } });
+                nombre: req.body.nombre
+            };
+            let result = await Rol.update(updatedObject, { returning: true, where: { id_rol: rolId } });
 
-            // return the response to client
             if (!result) {
                 res.status(500).json({
-                    message: "Error -> Can not update a supplier with id = " + req.params.id,
-                    error: "Can NOT Updated",
+                    message: "Error -> No se puede actualizar el rol con id = " + req.params.id,
+                    error: "No se pudo actualizar",
                 });
             }
 
             res.status(200).json({
-                message: "Update successfully a Supplier with id = " + supplierId,
-                supplier: updatedObject,
+                message: "Rol actualizado con éxito con id = " + rolId,
+                rol: updatedObject,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can not update a supplier with id = " + req.params.id,
+            message: "Error -> No se puede actualizar el rol con id = " + req.params.id,
             error: error.message
         });
     }
-}
+};
 
-exports.deleteSupplierById = async (req, res) => {
+exports.deleteRolById = async (req, res) => {
     try {
-        let supplierId = req.params.id;
-        let supplier = await Supplier.findByPk(supplierId);
+        let rolId = req.params.id;
+        let rol = await Rol.findByPk(rolId);
 
-        if (!supplier) {
+        if (!rol) {
             res.status(404).json({
-                message: "Does Not exist a Supplier with id = " + supplierId,
+                message: "No existe un rol con id = " + rolId,
                 error: "404",
             });
         } else {
-            await supplier.destroy();
+            await rol.destroy();
             res.status(200).json({
-                message: "Delete Successfully a Supplier with id = " + supplierId,
-                supplier: supplier,
+                message: "Rol eliminado con éxito con id = " + rolId,
+                rol: rol,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can NOT delete a supplier with id = " + req.params.id,
+            message: "Error -> No se puede eliminar el rol con id = " + req.params.id,
             error: error.message,
         });
     }
-}
+};
 
-// Controladores para Employee
-
-exports.createEmployee = (req, res) => {
-    let employee = {};
+// Controladores para Usuario
+exports.createUsuario = (req, res) => {
+    let usuario = {};
 
     try {
-        // Building Employee object from uploading request's body
-        employee.firstName = req.body.firstName;
-        employee.lastName = req.body.lastName;
-        employee.position = req.body.position;
-        employee.salary = req.body.salary;
-        employee.hireDate = req.body.hireDate;
+        usuario.nombre_usuario = req.body.nombre_usuario;
+        usuario.email = req.body.email;
+        usuario.contrasena = req.body.contrasena;
+        usuario.id_rol = req.body.id_rol;
 
-        // Save to MySQL database
-        Employee.create(employee).then(result => {
-            // send uploading message to client
+        Usuario.create(usuario).then(result => {
             res.status(200).json({
-                message: "Upload Successfully an Employee with id = " + result.id,
-                employee: result,
+                message: "Usuario creado con éxito con id = " + result.id_usuario,
+                usuario: result,
             });
         });
     } catch (error) {
         res.status(500).json({
-            message: "Fail!",
+            message: "Error!",
             error: error.message
         });
     }
-}
+};
 
-exports.retrieveAllEmployees = (req, res) => {
-    // find all Employee information from
-    Employee.findAll()
-        .then(employeeInfos => {
+exports.retrieveAllUsuarios = (req, res) => {
+    Usuario.findAll()
+        .then(usuarioInfos => {
             res.status(200).json({
-                message: "Get all Employees' Infos Successfully!",
-                employees: employeeInfos
+                message: "Usuarios recuperados con éxito!",
+                usuarios: usuarioInfos
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.getEmployeeById = (req, res) => {
-    // find all Employee information from
-    let employeeId = req.params.id;
-    Employee.findByPk(employeeId)
-        .then(employee => {
+exports.getUsuarioById = (req, res) => {
+    let usuarioId = req.params.id;
+    Usuario.findByPk(usuarioId)
+        .then(usuario => {
             res.status(200).json({
-                message: " Successfully Get an Employee with id = " + employeeId,
-                employees: employee
+                message: "Usuario recuperado con éxito con id = " + usuarioId,
+                usuario: usuario
             });
         })
         .catch(error => {
-            // log on console
-            console.log(error);
-
             res.status(500).json({
                 message: "Error!",
                 error: error
             });
         });
-}
+};
 
-exports.updateEmployeeById = async (req, res) => {
+exports.updateUsuarioById = async (req, res) => {
     try {
-        let employeeId = req.params.id;
-        let employee = await Employee.findByPk(employeeId);
+        let usuarioId = req.params.id;
+        let usuario = await Usuario.findByPk(usuarioId);
 
-        if (!employee) {
-            // return a response to client
+        if (!usuario) {
             res.status(404).json({
-                message: "Not Found for updating an employee with id = " + employeeId,
-                employee: "",
+                message: "No se encontró el usuario para actualizar con id = " + usuarioId,
+                usuario: "",
                 error: "404"
             });
         } else {
-            // update new change to database
             let updatedObject = {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                position: req.body.position,
-                salary: req.body.salary,
-                hireDate: req.body.hireDate
-            }
-            let result = await Employee.update(updatedObject, { returning: true, where: { id: employeeId } });
+                nombre_usuario: req.body.nombre_usuario,
+                email: req.body.email,
+                contrasena: req.body.contrasena,
+                id_rol: req.body.id_rol
+            };
+            let result = await Usuario.update(updatedObject, { returning: true, where: { id_usuario: usuarioId } });
 
-            // return the response to client
             if (!result) {
                 res.status(500).json({
-                    message: "Error -> Can not update an employee with id = " + req.params.id,
-                    error: "Can NOT Updated",
+                    message: "Error -> No se puede actualizar el usuario con id = " + req.params.id,
+                    error: "No se pudo actualizar",
                 });
             }
 
             res.status(200).json({
-                message: "Update successfully an Employee with id = " + employeeId,
-                employee: updatedObject,
+                message: "Usuario actualizado con éxito con id = " + usuarioId,
+                usuario: updatedObject,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can not update an employee with id = " + req.params.id,
+            message: "Error -> No se puede actualizar el usuario con id = " + req.params.id,
             error: error.message
         });
     }
-}
+};
 
-exports.deleteEmployeeById = async (req, res) => {
+exports.deleteUsuarioById = async (req, res) => {
     try {
-        let employeeId = req.params.id;
-        let employee = await Employee.findByPk(employeeId);
+        let usuarioId = req.params.id;
+        let usuario = await Usuario.findByPk(usuarioId);
 
-        if (!employee) {
+        if (!usuario) {
             res.status(404).json({
-                message: "Does Not exist an Employee with id = " + employeeId,
+                message: "No existe un usuario con id = " + usuarioId,
                 error: "404",
             });
         } else {
-            await employee.destroy();
+            await usuario.destroy();
             res.status(200).json({
-                message: "Delete Successfully an Employee with id = " + employeeId,
-                employee: employee,
+                message: "Usuario eliminado con éxito con id = " + usuarioId,
+                usuario: usuario,
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> Can NOT delete an employee with id = " + req.params.id,
+            message: "Error -> No se puede eliminar el usuario con id = " + req.params.id,
             error: error.message,
         });
     }
-}
+};
+
+// Controladores para Cliente
+exports.createCliente = (req, res) => {
+    let cliente = {};
+
+    try {
+        cliente.nombre = req.body.nombre;
+        cliente.telefono = req.body.telefono;
+        cliente.direccion = req.body.direccion;
+        cliente.es_mayorista = req.body.es_mayorista;
+        cliente.id_usuario = req.body.id_usuario;
+
+        Cliente.create(cliente).then(result => {
+            res.status(200).json({
+                message: "Cliente creado con éxito con id = " + result.id_cliente,
+                cliente: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.retrieveAllClientes = (req, res) => {
+    Cliente.findAll()
+        .then(clienteInfos => {
+            res.status(200).json({
+                message: "Clientes recuperados con éxito!",
+                clientes: clienteInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getClienteById = (req, res) => {
+    let clienteId = req.params.id;
+    Cliente.findByPk(clienteId)
+        .then(cliente => {
+            res.status(200).json({
+                message: "Cliente recuperado con éxito con id = " + clienteId,
+                cliente: cliente
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updateClienteById = async (req, res) => {
+    try {
+        let clienteId = req.params.id;
+        let cliente = await Cliente.findByPk(clienteId);
+
+        if (!cliente) {
+            res.status(404).json({
+                message: "No se encontró el cliente para actualizar con id = " + clienteId,
+                cliente: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                nombre: req.body.nombre,
+                telefono: req.body.telefono,
+                direccion: req.body.direccion,
+                es_mayorista: req.body.es_mayorista,
+                id_usuario: req.body.id_usuario
+            };
+            let result = await Cliente.update(updatedObject, { returning: true, where: { id_cliente: clienteId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar el cliente con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Cliente actualizado con éxito con id = " + clienteId,
+                cliente: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar el cliente con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deleteClienteById = async (req, res) => {
+    try {
+        let clienteId = req.params.id;
+        let cliente = await Cliente.findByPk(clienteId);
+
+        if (!cliente) {
+            res.status(404).json({
+                message: "No existe un cliente con id = " + clienteId,
+                error: "404",
+            });
+        } else {
+            await cliente.destroy();
+            res.status(200).json({
+                message: "Cliente eliminado con éxito con id = " + clienteId,
+                cliente: cliente,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar el cliente con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};
+
+// Controladores para Pedido
+exports.createPedido = (req, res) => {
+    let pedido = {};
+
+    try {
+        pedido.id_cliente = req.body.id_cliente;
+        pedido.fecha_pedido = req.body.fecha_pedido;
+        pedido.total = req.body.total;
+        pedido.id_usuario = req.body.id_usuario;
+
+        Pedido.create(pedido).then(result => {
+            res.status(200).json({
+                message: "Pedido creado con éxito con id = " + result.id_pedido,
+                pedido: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.retrieveAllPedidos = (req, res) => {
+    Pedido.findAll()
+        .then(pedidoInfos => {
+            res.status(200).json({
+                message: "Pedidos recuperados con éxito!",
+                pedidos: pedidoInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getPedidoById = (req, res) => {
+    let pedidoId = req.params.id;
+    Pedido.findByPk(pedidoId)
+        .then(pedido => {
+            res.status(200).json({
+                message: "Pedido recuperado con éxito con id = " + pedidoId,
+                pedido: pedido
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updatePedidoById = async (req, res) => {
+    try {
+        let pedidoId = req.params.id;
+        let pedido = await Pedido.findByPk(pedidoId);
+
+        if (!pedido) {
+            res.status(404).json({
+                message: "No se encontró el pedido para actualizar con id = " + pedidoId,
+                pedido: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                id_cliente: req.body.id_cliente,
+                fecha_pedido: req.body.fecha_pedido,
+                total: req.body.total,
+                id_usuario: req.body.id_usuario
+            };
+            let result = await Pedido.update(updatedObject, { returning: true, where: { id_pedido: pedidoId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar el pedido con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Pedido actualizado con éxito con id = " + pedidoId,
+                pedido: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar el pedido con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deletePedidoById = async (req, res) => {
+    try {
+        let pedidoId = req.params.id;
+        let pedido = await Pedido.findByPk(pedidoId);
+
+        if (!pedido) {
+            res.status(404).json({
+                message: "No existe un pedido con id = " + pedidoId,
+                error: "404",
+            });
+        } else {
+            await pedido.destroy();
+            res.status(200).json({
+                message: "Pedido eliminado con éxito con id = " + pedidoId,
+                pedido: pedido,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar el pedido con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};
+
+// Controladores para DetallePedido
+exports.createDetallePedido = (req, res) => {
+    let detallePedido = {};
+
+    try {
+        detallePedido.id_pedido = req.body.id_pedido;
+        detallePedido.id_producto = req.body.id_producto;
+        detallePedido.cantidad = req.body.cantidad;
+        detallePedido.precio_unitario = req.body.precio_unitario;
+        detallePedido.subtotal = req.body.subtotal;
+
+        DetallePedido.create(detallePedido).then(result => {
+            res.status(200).json({
+                message: "Detalle de pedido creado con éxito con id = " + result.id_detalle,
+                detallePedido: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.retrieveAllDetallesPedido = (req, res) => {
+    DetallePedido.findAll()
+        .then(detallePedidoInfos => {
+            res.status(200).json({
+                message: "Detalles de pedidos recuperados con éxito!",
+                detallesPedido: detallePedidoInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getDetallePedidoById = (req, res) => {
+    let detallePedidoId = req.params.id;
+    DetallePedido.findByPk(detallePedidoId)
+        .then(detallePedido => {
+            res.status(200).json({
+                message: "Detalle de pedido recuperado con éxito con id = " + detallePedidoId,
+                detallePedido: detallePedido
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updateDetallePedidoById = async (req, res) => {
+    try {
+        let detallePedidoId = req.params.id;
+        let detallePedido = await DetallePedido.findByPk(detallePedidoId);
+
+        if (!detallePedido) {
+            res.status(404).json({
+                message: "No se encontró el detalle de pedido para actualizar con id = " + detallePedidoId,
+                detallePedido: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                id_pedido: req.body.id_pedido,
+                id_producto: req.body.id_producto,
+                cantidad: req.body.cantidad,
+                precio_unitario: req.body.precio_unitario,
+                subtotal: req.body.subtotal
+            };
+            let result = await DetallePedido.update(updatedObject, { returning: true, where: { id_detalle: detallePedidoId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar el detalle de pedido con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Detalle de pedido actualizado con éxito con id = " + detallePedidoId,
+                detallePedido: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar el detalle de pedido con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deleteDetallePedidoById = async (req, res) => {
+    try {
+        let detallePedidoId = req.params.id;
+        let detallePedido = await DetallePedido.findByPk(detallePedidoId);
+
+        if (!detallePedido) {
+            res.status(404).json({
+                message: "No existe un detalle de pedido con id = " + detallePedidoId,
+                error: "404",
+            });
+        } else {
+            await detallePedido.destroy();
+            res.status(200).json({
+                message: "Detalle de pedido eliminado con éxito con id = " + detallePedidoId,
+                detallePedido: detallePedido,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar el detalle de pedido con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};

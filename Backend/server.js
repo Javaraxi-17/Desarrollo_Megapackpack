@@ -4,11 +4,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./app/config/db.config.js');
 
-// Sincronización de la base de datos sin forzar la recreación de tablas
-db.sequelize.sync().then(() => {
-  console.log('Resync without { force: true }');
-});
-
 // Configuración de CORS
 const corsOptions = {
   origin: 'http://localhost:4200',
@@ -28,11 +23,37 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenido Estudiantes de UMG" });
 });
 
-// Crear un Servidor
-const PORT = process.env.PORT || 3001;
-const server = app.listen(PORT, function () {
-  let host = server.address().address;
-  let port = server.address().port;
-
-  console.log("App listening at http://%s:%s", host, port);
-});
+// Sincronización de tablas en el orden correcto
+db.Categoria.sync()  // Sincronizar primero la tabla de Categorías
+  .then(() => {
+    return db.Rol.sync();  // Sincronizar la tabla de Roles
+  })
+  .then(() => {
+    return db.Usuario.sync();  // Sincronizar la tabla de Usuarios
+  })
+  .then(() => {
+    return db.Cliente.sync();  // Sincronizar la tabla de Clientes
+  })
+  .then(() => {
+    return db.Pedido.sync();  // Sincronizar la tabla de Pedidos
+  })
+  .then(() => {
+    return db.Producto.sync();  // Sincronizar la tabla de Productos
+  })
+  .then(() => {
+    return db.DetallePedido.sync();  // Sincronizar la tabla de DetallePedido
+  })
+  .then(() => {
+    console.log('Tablas sincronizadas correctamente');
+    
+    // Crear un Servidor
+    const PORT = process.env.PORT || 3001;
+    const server = app.listen(PORT, function () {
+      let host = server.address().address;
+      let port = server.address().port;
+      console.log("App listening at http://%s:%s", host, port);
+    });
+  })
+  .catch(error => {
+    console.error('Error sincronizando tablas:', error);
+  });

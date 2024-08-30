@@ -1,11 +1,9 @@
-
-
 const env = {
-  database: 'apistiendaropa',
-  username: 'apistiendaropa_user',
-  password: '1AHQ6vLQx0EOzE6f9dc5nwv5hUykFTlU',
-  host: 'dpg-cqlek088fa8c73appv6g-a.oregon-postgres.render.com',
-  dialect: 'postgres',
+  database: 'FREEPDB1',  // Nombre del servicio o base de datos
+  username: 'MEGAPACK',  // Tu nombre de usuario de Oracle
+  password: '1234',  // Tu contraseña de Oracle
+  host: 'localhost',  // Dirección del host de Oracle
+  dialect: 'oracle',  // Dialecto para Sequelize
   pool: {
     max: 5, 
     min: 0,
