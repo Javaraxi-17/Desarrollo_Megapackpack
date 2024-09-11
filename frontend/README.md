@@ -1,97 +1,27 @@
-[![Code Climate](https://codeclimate.com/github/kevinlanzon/clothes-store/badges/gpa.svg)](https://codeclimate.com/github/kevinlanzon/clothes-store)
-Clothes Store
-============
+# BigbasketEcommerceAngular
 
-A responsive store for a clothing retailer built with AngularJS. The store contains six different categories of clothing and a shopping cart with the option to redeem discount vouchers.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0-next.0.
 
-Screenshot
----
-<div align="center">
-  <img width="105%" src="public/images/screen-shot.png">
-</div>
+## Development server
 
-Requirements
--------
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-- [x] As a User I can add a product to my shopping cart
-- [x] As a User I can remove a product from my shopping cart
-- [x] As a User I can view the total price for the products in my shopping cart
-- [x] As a User I can apply a voucher to my shopping cart
-- [x] As a User I can view the total price for the products in my shopping cart with discounts applied
-- [x] As a User I am alerted when I apply an invalid voucher to my shopping cart
-- [x] As a User I am unable to add Out of Stock products to the shopping cart
-- [x] Website is responsive
+## Code scaffolding
 
-Approach
---------
-I decided to use AngularJS, building the app by writing feature tests with Protractor first to fulfill the requirements in the order above and Karma with Jasmine for unit testing. I wasn't sure if I should use Express as a server but decided against it to keep things simple. The product data has been mocked in a RESTful API and the discounts can be applied by entering voucher codes for each offer. The codes are **5off**, **10off** and **15off**.
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-Technologies used
-----
-- AngularJS
-- Node.js
-- Express.js
-- Karma for unit testing
-- Protractor for feature testing
-- HTML
-- CSS
-- Bootstrap
-- Photoshop
+## Build
 
-File Structure
-----------------
-```
-- app
-  - css
-    - app.css
-    - bootstrap.min.css
-  - images
-  - js
-    - app.js: Contains angular module
-    - storeController.js: Contains the controller
-  - partials
-    - store.html: Contains the homepage layout
-  - products
-    - productList.json: Contains the product data
-  - index.html: Contains the main html
-- test
-  - e2e
-    - storeFeature.js: Contains end to end tests
-  - unit
-    - storeController.spec.js: Contains unit tests
-```
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-How to clone this repo
-----
-```sh
-git clone https://github.com/kevinlanzon/clothes-store
-```
-Setup
------
-```sh
-$ npm install
-$ bower install
-$ npm start
-Visit http//localhost:3000
-```
+## Running unit tests
 
-How to run tests
-----
-```sh
-$ cd clothes-store
-$ npm start
-$ npm test
-$ npm run protractor
-```
-Voucher Codes
-----
-- For £ 5.00 off your order use **5off**
-- For £10.00 off your order when you spend over £50 use **10off**
-- For £15.00 off when you spend over £75 and you have bought at least one item of footwear use **15off**
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-To do
---------
-- Refactor the voucher discount into a single method
-- A separate view for the shopping cart
-- Clear the discount form after a voucher code has been applied
-- Improve styling
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
