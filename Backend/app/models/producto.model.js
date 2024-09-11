@@ -40,6 +40,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       field: 'ES_MAYORISTA' // Nombre exacto de la columna
+    },
+    imagen_url: {
+      type: Sequelize.STRING(500), // Campo adecuado para almacenar URLs largas
+      field: 'IMAGEN_URL' // Nombre exacto de la columna
     }
   }, {
     tableName: 'PRODUCTOS',  // Nombre exacto de la tabla
