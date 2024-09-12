@@ -35,16 +35,16 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle redHover fw-semibold text-uppercase text-black me-1" id="navbarDropdown"
               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              pages
+              Paginas
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item">About Us</a></li>
-              <li><a class="dropdown-item">Contact Us</a></li>
-              <li><a class="dropdown-item">Terms and Conditions</a></li>
+              <li><a class="dropdown-item">Acerca de Nosotros</a></li>
+              <li><a class="dropdown-item">Contactanos</a></li>
+              <li><a class="dropdown-item">Terminos y Conduciones</a></li>
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-semibold text-uppercase text-black me-1 hand">Contact us</a>
+            <a class="nav-link fw-semibold text-uppercase text-black me-1 hand">Contacta con Nosotros</a>
           </li>
           <li class="nav-item">
             <a class="nav-link"><i class="fa-solid fa-magnifying-glass fs-5" style="color: #0c0d0d;"></i></a>
@@ -92,7 +92,7 @@
                         <h6>{{calculateTotalSubtotal() | currency: 'INR'}}</h6>
                       </div>
                       <div class="d-flex justify-content-evenly mt-2">
-                        <button class="btn btn-dark rounded-0 px-3"> View Cart</button>
+                        <button class="btn btn-dark rounded-0 px-3"> Carrito</button>
                         <a routerLink="/checkout" routerLinkActive="router-link-active"> <button
                             class="btn btn-danger rounded-0 px-3">Checkout</button></a>
                       </div>
@@ -103,7 +103,7 @@
               <ng-container *ngIf="cartList.length == 0">
                 <ul class="dropdown-menu menuOnLeft rounded-0 mt-2" aria-labelledby="navbarDropdown">
                   <li>
-                    <p class="text-center mb-0">No Product Added to Cart</p>
+                    <p class="text-center mb-0">No hay productos Agregados al carrito</p>
                   </li>
                 </ul>
               </ng-container>
@@ -136,9 +136,9 @@
               <ul class="dropdown-menu loginDropdownMenu" style="left:-50px" aria-labelledby="navbarDropdown">
                 <li>
                   <div class="text-center">
-                    <a (click)="openLoginModal()"><button class="btn loginBtn rounded-2">Login</button></a>
+                    <a (click)="openLoginModal()"><button class="btn loginBtn rounded-2">Inicia Sesion</button></a>
                     <div class="regDiv">
-                      <span>New customer? </span><a class="registerLink" (click)="openRegisterModal()">Start here.</a>
+                      <span>¿Nuevo Cliente? </span><a class="registerLink" (click)="openRegisterModal()">Registrate aqui.</a>
                     </div>
                   </div>
                 </li>
@@ -162,45 +162,45 @@
         [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
         <div class="row">
           <div class="col-md-12">
-            <label class="my-1 fw-semibold">Mobile Number</label>
+            <label class="my-1 fw-semibold">Numero de Telefono</label>
             <input type="tel" class="form-control" name="phone" #phone="ngModel" [(ngModel)]="loginObj.UserName"
-              required [pattern]="phonePattern" pInputText placeholder="Enter Mobile Number">
+              required [pattern]="phonePattern" pInputText placeholder="Ingresa tu Numero">
             <div class="validation-error" *ngIf="phone.touched || phone.dirty">
-              <div *ngIf="phone.errors?.['required']">Mobile Number is required</div>
-              <div *ngIf="phone.errors?.['pattern']">Please, Enter 10 digit Mobile Number.</div>
+              <div *ngIf="phone.errors?.['required']">El numero de Telefono es requerido</div>
+              <div *ngIf="phone.errors?.['pattern']">Ingresa un numero de 10 digitos.</div>
             </div>
           </div>
         </div>
         <div class="row mt-1">
           <div class="col-md-12">
             <div id="password-input-container">
-              <label class="my-1 fw-semibold">Password</label>
+              <label class="my-1 fw-semibold">Contraseña</label>
               <input [type]="showLoginPassword?'text':'password'" class="form-control" name="UserPassword"
                 #UserPassword="ngModel" required [pattern]="passwordPattern" [(ngModel)]="loginObj.UserPassword"
-                pInputText placeholder="Enter Password">
+                pInputText placeholder="Ingresa la Contraseña">
               <span toggle="#password-field" class="fa fa-fw fa-eye hand password-eye" (click)="onEyeClick()"
                 *ngIf="showLoginPassword == true"></span>
               <span toggle="#password-field" class="fa fa-fw fa-eye-slash hand password-eye" (click)="onEyeClick()"
                 *ngIf="showLoginPassword == false"></span>
             </div>
             <div class="validation-error" *ngIf="UserPassword.touched || UserPassword.dirty">
-              <div *ngIf="UserPassword.errors?.['required']">Password is required</div>
-              <div *ngIf="UserPassword.errors?.['pattern']">Password must contain at least one uppercase letter, one
-                lowercase letter, one digit, and one special character (#?!&#64;$%^&*-).</div>
+              <div *ngIf="UserPassword.errors?.['required']">La Contraseña es obligatoria</div>
+              <div *ngIf="UserPassword.errors?.['pattern']">La Contraseña necesita contener una Letra Mayuscula, Una minuscula,
+              Un numero Y un caracter especial (#?!&#64;$%^&*-).</div>
             </div>
             <div class="mt-2">
               <div class="field field-checkbox">
-                <p-checkbox class="rememberMeTxt pe-5" [(ngModel)]="rememberMe" name="rememberMe" label="Remember me"
+                <p-checkbox class="rememberMeTxt pe-5" [(ngModel)]="rememberMe" name="rememberMe" label="Recuerdame"
                   inputId="rememberMeCheckbox" [binary]="true"></p-checkbox>
               </div>
             </div>
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton pRipple class="p-button-success p-button-sm" label="Login" (click)="login(loginFrm)">
+          <button pButton pRipple class="p-button-success p-button-sm" label="Inicia Sesion" (click)="login(loginFrm)">
             <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
           </button>
-          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Close"
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Cerrar"
             (click)="closeLoginModal()"></button>
         </ng-template>
       </p-dialog>
@@ -217,47 +217,47 @@
         [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
         <div class="row">
           <div class="col-md-6">
-            <label class="my-1 fw-semibold">Name</label>
+            <label class="my-1 fw-semibold">Usuario</label>
             <input type="text" class="form-control" name="Name" #Name="ngModel" [(ngModel)]="registerObj.Name" required
-              pInputText placeholder="Enter Your Name">
+              pInputText placeholder="Ingresa tu Usuario">
             <div class="validation-error" *ngIf="Name.touched || Name.dirty">
-              <div *ngIf="Name.errors?.['required']">Name is required</div>
+              <div *ngIf="Name.errors?.['required']">El Usuario es Requerido</div>
             </div>
           </div>
           <div class="col-md-6">
-            <label class="my-1 fw-semibold">Mobile</label>
+            <label class="my-1 fw-semibold">Numero de Telefono</label>
             <input type="tel" class="form-control" name="MobileNo" #MobileNo="ngModel" [pattern]="phonePattern"
-              [(ngModel)]="registerObj.MobileNo" required pInputText placeholder="Enter Mobile No">
+              [(ngModel)]="registerObj.MobileNo" required pInputText placeholder="Ingresa tu Numero de telefono">
             <div class="validation-error" *ngIf="MobileNo.touched || MobileNo.dirty">
-              <div *ngIf="MobileNo.errors?.['required']">Mobile Number is required</div>
-              <div *ngIf="MobileNo.errors?.['pattern']">Please, Enter 10 digit Mobile Number.</div>
+              <div *ngIf="MobileNo.errors?.['required']">El numero de telefono es Obligatorio</div>
+              <div *ngIf="MobileNo.errors?.['pattern']">Ingresa un numero de 10 digitos.</div>
             </div>
           </div>
         </div>
         <div class="row mt-1">
           <div class="col-md-12">
             <div id="password-input-container">
-              <label class="my-1 fw-semibold">Password</label>
+              <label class="my-1 fw-semibold">Contraseña</label>
               <input [type]="showRegisterPassword?'text':'password'" class="form-control" name="Password"
                 #Password="ngModel" required [pattern]="passwordPattern" [(ngModel)]="registerObj.Password" pInputText
-                placeholder="Enter Password">
+                placeholder="Ingresa la contraseña">
               <span toggle="#password-field" class="fa fa-fw fa-eye hand password-eye" (click)="onProfileEyeClick()"
                 *ngIf="showRegisterPassword == true"></span>
               <span toggle="#password-field" class="fa fa-fw fa-eye-slash hand password-eye"
                 (click)="onRegisterEyeClick()" *ngIf="showRegisterPassword == false"></span>
             </div>
             <div class="validation-error" *ngIf="Password.touched || Password.dirty">
-              <div *ngIf="Password.errors?.['required']">Password is required</div>
-              <div *ngIf="Password.errors?.['pattern']">Password must contain at least one uppercase letter, one
-                lowercase letter, one digit, and one special character (#?!&#64;$%^&*-).</div>
+              <div *ngIf="Password.errors?.['required']">La contraseña es obligatoria</div>
+              <div *ngIf="UserPassword.errors?.['pattern']">La Contraseña necesita contener una Letra Mayuscula, Una minuscula,
+              Un numero Y un caracter especial (#?!&#64;$%^&*-).</div>
             </div>
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton pRipple class="p-button-primary p-button-sm" label="Register" (click)="register(registerFrm)">
+          <button pButton pRipple class="p-button-primary p-button-sm" label="Registrate" (click)="register(registerFrm)">
             <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
           </button>
-          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Close"
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Cerrar"
             (click)="closeRegisterModal()"></button>
         </ng-template>
       </p-dialog>
