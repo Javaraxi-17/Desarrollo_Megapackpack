@@ -59,3 +59,15 @@
   margin-top: 0;
   background: #fff;
 }
+.footer .store-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px; /* Ajusta el espacio entre los íconos */
+}
+
+.footer img {
+  max-width: 100px; /* Ajusta el tamaño máximo de los íconos */
+  height: auto;
+}
+

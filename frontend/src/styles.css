@@ -40,21 +40,21 @@
 }
 
 .bg-primary {
-  background-color: #81c408 !important;
+  background-color: #2b08c4 !important;
 }
 
 .display-4 {
   font-size: calc(1.475rem + 2.7vw) !important;
   font-weight: 800 !important;
   line-height: 1.2 !important;
-  color: #81c408 !important;
+  color: #0b63e7 !important;
 }
 
-.empty {
+.empty { /* Texto Principal */ 
   font-size: 40px !important;
   font-weight: 800 !important;
   line-height: 1.2 !important;
-  color: #81c408 !important;
+  color: #000000 !important;
   text-align: center !important;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .log_Reg_Border {
-  border: 1px solid pink;
+  border: 1px solid rgb(25, 25, 25);
   border-radius: 20%;
   margin-left: 10px;
 }
@@ -110,7 +110,7 @@
 }
 
 .text-primary {
-  color: #81c408 !important;
+  color: #c4086f !important;
 }
 
 .px-3 {
@@ -123,7 +123,7 @@
 }
 
 .nav-yellow {
-  background-color: #81c408 !important;
+  background-color: #c4086f !important;
 }
 
 .menuOnLeft {
@@ -237,7 +237,7 @@ select.form-select {
 
 .p-checkbox .p-checkbox-box.p-highlight {
   border-color: #fff;
-  background: #81C408 !important;
+  background: #c4086f !important;
 }
 
 .p-checkbox .p-checkbox-box .p-checkbox-icon {

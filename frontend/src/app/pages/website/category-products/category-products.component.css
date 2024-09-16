@@ -1,12 +1,12 @@
 .incDecBtn {
-  background-color: #81C408;
+  background-color: #f12be8;
   color: #fff;
   font-size: 12px;
   font-weight: 900 !important;
 }
 
 .incDecBtn:focus {
-  background-color: #81C408;
+  background-color: #f12be8;
   color: #fff;
 }
 

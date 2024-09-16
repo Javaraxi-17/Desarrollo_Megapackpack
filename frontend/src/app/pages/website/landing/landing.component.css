@@ -1,5 +1,5 @@
 .dropdown-item:hover {
-  background: #81C408 !important;
+  background: #f12be8 !important;
 }
 
 #password-input-container {
@@ -14,7 +14,7 @@
 }
 
 .loginBtn {
-  background: #81C408;
+  background: #f12be8;
   width: calc(100% - 32px);
   margin: 0px 16px;
   padding: 5px 0px;
@@ -24,7 +24,7 @@
 }
 
 .loginBtn:active {
-  background: #81C408;
+  background: #f12be8;
   border: none;
 }
 
@@ -44,7 +44,7 @@
 .registerLink:hover {
   cursor: pointer;
   text-decoration: underline !important;
-  color: #81C408;
+  color: #f12be8;
 }
 
 .userProfile {
