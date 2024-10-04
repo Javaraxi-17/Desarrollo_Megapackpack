@@ -23,28 +23,28 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenido Estudiantes de UMG" });
 });
 
-// Sincronización de tablas en el orden correcto
-db.Categoria.sync()  // Sincronizar primero la tabla de Categorías
+// Sincronización de tablas en el orden correcto con force: true
+db.Categoria.sync({ force: true })  // Forzar recreación de la tabla de Categorías (borra y recrea la tabla)
   .then(() => {
-    return db.Rol.sync();  // Sincronizar la tabla de Roles
+    return db.Rol.sync({ force: true });  // Forzar recreación de la tabla de Roles
   })
   .then(() => {
-    return db.Usuario.sync();  // Sincronizar la tabla de Usuarios
+    return db.Usuario.sync({ force: true });  // Forzar recreación de la tabla de Usuarios
   })
   .then(() => {
-    return db.Cliente.sync();  // Sincronizar la tabla de Clientes
+    return db.Cliente.sync({ force: true });  // Forzar recreación de la tabla de Clientes
   })
   .then(() => {
-    return db.Pedido.sync();  // Sincronizar la tabla de Pedidos
+    return db.Pedido.sync({ force: true });  // Forzar recreación de la tabla de Pedidos
   })
   .then(() => {
-    return db.Producto.sync();  // Sincronizar la tabla de Productos
+    return db.Producto.sync({ force: true });  // Forzar recreación de la tabla de Productos
   })
   .then(() => {
-    return db.DetallePedido.sync();  // Sincronizar la tabla de DetallePedido
+    return db.DetallePedido.sync({ force: true });  // Forzar recreación de la tabla de DetallePedido
   })
   .then(() => {
-    console.log('Tablas sincronizadas correctamente');
+    console.log('Tablas recreadas correctamente con force: true');
     
     // Crear un Servidor
     const PORT = process.env.PORT || 3001;

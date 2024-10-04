@@ -1,48 +1,77 @@
 module.exports = (sequelize, Sequelize) => {
   const Producto = sequelize.define('Producto', {
-    id_producto: {
+    productId: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      field: 'ID_PRODUCTO' // Nombre exacto de la columna
+      field: 'PRODUCT_ID'  // Nombre exacto de la columna
     },
-    nombre: {
+    productSku: {
       type: Sequelize.STRING(100),
       allowNull: false,
-      field: 'NOMBRE' // Nombre exacto de la columna
+      field: 'PRODUCT_SKU'  // Nombre exacto de la columna
     },
-    descripcion: {
-      type: Sequelize.TEXT,
-      field: 'DESCRIPCION' // Nombre exacto de la columna
+    productName: {
+      type: Sequelize.STRING(100),
+      allowNull: false,
+      field: 'PRODUCT_NAME'  // Nombre exacto de la columna
     },
-    precio: {
+    productPrice: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
-      field: 'PRECIO' // Nombre exacto de la columna
+      field: 'PRODUCT_PRICE'  // Nombre exacto de la columna
     },
-    id_categoria: {
+    productShortName: {
+      type: Sequelize.STRING(50),
+      allowNull: true,
+      field: 'PRODUCT_SHORT_NAME'  // Nombre exacto de la columna
+    },
+    productDescription: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+      field: 'PRODUCT_DESCRIPTION'  // Nombre exacto de la columna
+    },
+    createdDate: {
+      type: Sequelize.DATE,
+      allowNull: true,
+      field: 'CREATED_DATE'  // Nombre exacto de la columna
+    },
+    deliveryTimeSpan: {
       type: Sequelize.INTEGER,
+      allowNull: true,
+      field: 'DELIVERY_TIME_SPAN'  // Nombre exacto de la columna
+    },
+    categoryId: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      field: 'CATEGORY_ID',  // Asegúrate de que este nombre sea correcto
       references: {
         model: {
-          tableName: 'CATEGORIAS',
+          tableName: 'CATEGORIAS',  // Tabla de categorías
           schema: 'MEGAPACK'
         },
-        key: 'ID_CATEGORIA' // Nombre exacto de la columna en la relación
-      },
-      field: 'ID_CATEGORIA' // Nombre exacto de la columna
+        key: 'CATEGORY_ID'  // Llave primaria de la tabla de categorías
+      }
     },
-    stock: {
+    productImageUrl: {
+      type: Sequelize.STRING(255),
+      allowNull: true,
+      field: 'PRODUCT_IMAGE_URL'  // Nombre exacto de la columna
+    },
+    userId: {
       type: Sequelize.INTEGER,
-      allowNull: false,
-      field: 'STOCK' // Nombre exacto de la columna
-    },
-    es_mayorista: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      field: 'ES_MAYORISTA' // Nombre exacto de la columna
+      allowNull: true,
+      field: 'USER_ID',  // Llave foránea a la tabla de usuarios
+      references: {
+        model: {
+          tableName: 'USUARIOS',  // Tabla de usuarios
+          schema: 'MEGAPACK'
+        },
+        key: 'ID_USUARIO'  // Llave primaria de la tabla de usuarios
+      }
     }
   }, {
-    tableName: 'PRODUCTOS',  // Nombre exacto de la tabla
+    tableName: 'PRODUCTOS',
     schema: 'MEGAPACK',
     timestamps: false
   });

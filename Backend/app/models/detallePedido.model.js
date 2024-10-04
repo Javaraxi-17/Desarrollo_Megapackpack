@@ -13,20 +13,20 @@ module.exports = (sequelize, Sequelize) => {
           tableName: 'PEDIDOS',
           schema: 'MEGAPACK'
         },
-        key: 'ID_PEDIDO' // Nombre exacto de la columna en la relación
+        key: 'SALE_ID' // Cambiado a SALE_ID para hacer referencia correcta
       },
-      field: 'ID_PEDIDO' // Nombre exacto de la columna
+      field: 'ID_PEDIDO' // Nombre exacto de la columna en la tabla de detalles
     },
-    id_producto: {
+    product_id: {
       type: Sequelize.INTEGER,
       references: {
         model: {
           tableName: 'PRODUCTOS',
           schema: 'MEGAPACK'
         },
-        key: 'ID_PRODUCTO' // Nombre exacto de la columna en la relación
+        key: 'PRODUCT_ID' // Nombre exacto de la columna en la tabla PRODUCTOS
       },
-      field: 'ID_PRODUCTO' // Nombre exacto de la columna
+      field: 'PRODUCT_ID' // Nombre exacto de la columna en la tabla de detalles
     },
     cantidad: {
       type: Sequelize.INTEGER,

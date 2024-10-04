@@ -8,14 +8,18 @@ const Pedido = db.Pedido;
 const DetallePedido = db.DetallePedido;
 
 // Controladores para Categoria
+// Crear nueva categoría
 exports.createCategoria = (req, res) => {
     let categoria = {};
+
     try {
-        categoria.nombre = req.body.nombre;
+        categoria.categoryName = req.body.categoryName;
+        categoria.parentCategoryId = req.body.parentCategoryId || null;  // Puede ser null
+        categoria.userId = req.body.userId;
 
         Categoria.create(categoria).then(result => {
             res.status(200).json({
-                message: "Categoría creada con éxito con id = " + result.id_categoria,
+                message: "Categoría creada con éxito con id = " + result.categoryId,
                 categoria: result,
             });
         });
@@ -27,7 +31,8 @@ exports.createCategoria = (req, res) => {
     }
 };
 
-exports.retrieveAllCategorias = (req, res) => {
+// Obtener todas las categorías
+exports.GetAllCategorias = (req, res) => {
     Categoria.findAll()
         .then(categoriaInfos => {
             res.status(200).json({
@@ -43,14 +48,21 @@ exports.retrieveAllCategorias = (req, res) => {
         });
 };
 
+// Obtener categoría por ID
 exports.getCategoriaById = (req, res) => {
     let categoriaId = req.params.id;
     Categoria.findByPk(categoriaId)
         .then(categoria => {
-            res.status(200).json({
-                message: "Categoría recuperada con éxito con id = " + categoriaId,
-                categoria: categoria
-            });
+            if (categoria) {
+                res.status(200).json({
+                    message: "Categoría recuperada con éxito con id = " + categoriaId,
+                    categoria: categoria
+                });
+            } else {
+                res.status(404).json({
+                    message: "Categoría no encontrada con id = " + categoriaId,
+                });
+            }
         })
         .catch(error => {
             res.status(500).json({
@@ -60,6 +72,7 @@ exports.getCategoriaById = (req, res) => {
         });
 };
 
+// Actualizar categoría por ID
 exports.updateCategoriaById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
@@ -73,21 +86,23 @@ exports.updateCategoriaById = async (req, res) => {
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre
+                categoryName: req.body.categoryName,
+                parentCategoryId: req.body.parentCategoryId || null,  // Permitir null si no se especifica
+                userId: req.body.userId
             };
-            let result = await Categoria.update(updatedObject, { returning: true, where: { id_categoria: categoriaId } });
+            let result = await Categoria.update(updatedObject, { returning: true, where: { categoryId: categoriaId } });
 
-            if (!result) {
+            if (result) {
+                res.status(200).json({
+                    message: "Categoría actualizada con éxito con id = " + categoriaId,
+                    categoria: updatedObject,
+                });
+            } else {
                 res.status(500).json({
                     message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
                     error: "No se pudo actualizar",
                 });
             }
-
-            res.status(200).json({
-                message: "Categoría actualizada con éxito con id = " + categoriaId,
-                categoria: updatedObject,
-            });
         }
     } catch (error) {
         res.status(500).json({
@@ -97,6 +112,7 @@ exports.updateCategoriaById = async (req, res) => {
     }
 };
 
+// Eliminar categoría por ID
 exports.deleteCategoriaById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
@@ -123,20 +139,25 @@ exports.deleteCategoriaById = async (req, res) => {
 };
 
 // Controladores para Producto
+
 exports.createProduct = (req, res) => {
     let product = {};
 
     try {
-        product.nombre = req.body.nombre;
-        product.descripcion = req.body.descripcion;
-        product.precio = req.body.precio;
-        product.id_categoria = req.body.id_categoria;
-        product.stock = req.body.stock;
-        product.es_mayorista = req.body.es_mayorista;
+        product.ProductSku = req.body.ProductSku;
+        product.ProductName = req.body.ProductName;
+        product.ProductPrice = req.body.ProductPrice;
+        product.ProductShortName = req.body.ProductShortName;
+        product.ProductDescription = req.body.ProductDescription;
+        product.CreatedDate = req.body.CreatedDate || new Date();
+        product.DeliveryTimeSpan = req.body.DeliveryTimeSpan;
+        product.CategoryId = req.body.CategoryId;
+        product.ProductImageUrl = req.body.ProductImageUrl;
+        product.UserId = req.body.UserId;
 
         Producto.create(product).then(result => {
             res.status(200).json({
-                message: "Producto creado con éxito con id = " + result.id_producto,
+                message: "Producto creado con éxito con id = " + result.ProductId,
                 producto: result,
             });
         });
@@ -148,7 +169,7 @@ exports.createProduct = (req, res) => {
     }
 };
 
-exports.retrieveAllProducts = (req, res) => {
+exports.GetAllProducts = (req, res) => {
     Producto.findAll()
         .then(productInfos => {
             res.status(200).json({
@@ -194,14 +215,18 @@ exports.updateProductById = async (req, res) => {
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre,
-                descripcion: req.body.descripcion,
-                precio: req.body.precio,
-                id_categoria: req.body.id_categoria,
-                stock: req.body.stock,
-                es_mayorista: req.body.es_mayorista
+                ProductSku: req.body.ProductSku,
+                ProductName: req.body.ProductName,
+                ProductPrice: req.body.ProductPrice,
+                ProductShortName: req.body.ProductShortName,
+                ProductDescription: req.body.ProductDescription,
+                CreatedDate: req.body.CreatedDate || new Date(),
+                DeliveryTimeSpan: req.body.DeliveryTimeSpan,
+                CategoryId: req.body.CategoryId,
+                ProductImageUrl: req.body.ProductImageUrl,
+                UserId: req.body.UserId
             };
-            let result = await Producto.update(updatedObject, { returning: true, where: { id_producto: productId } });
+            let result = await Producto.update(updatedObject, { returning: true, where: { ProductId: productId } });
 
             if (!result) {
                 res.status(500).json({
@@ -247,6 +272,7 @@ exports.deleteProductById = async (req, res) => {
         });
     }
 };
+
 
 // Controladores para Rol
 exports.createRol = (req, res) => {
@@ -490,15 +516,13 @@ exports.createCliente = (req, res) => {
     let cliente = {};
 
     try {
-        cliente.nombre = req.body.nombre;
-        cliente.telefono = req.body.telefono;
-        cliente.direccion = req.body.direccion;
-        cliente.es_mayorista = req.body.es_mayorista;
-        cliente.id_usuario = req.body.id_usuario;
+        cliente.name = req.body.name;
+        cliente.mobileNo = req.body.mobileNo;
+        cliente.password = req.body.password;
 
         Cliente.create(cliente).then(result => {
             res.status(200).json({
-                message: "Cliente creado con éxito con id = " + result.id_cliente,
+                message: "Cliente creado con éxito con id = " + result.custId,
                 cliente: result,
             });
         });
@@ -556,13 +580,11 @@ exports.updateClienteById = async (req, res) => {
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre,
-                telefono: req.body.telefono,
-                direccion: req.body.direccion,
-                es_mayorista: req.body.es_mayorista,
-                id_usuario: req.body.id_usuario
+                name: req.body.name,
+                mobileNo: req.body.mobileNo,
+                password: req.body.password
             };
-            let result = await Cliente.update(updatedObject, { returning: true, where: { id_cliente: clienteId } });
+            let result = await Cliente.update(updatedObject, { returning: true, where: { custId: clienteId } });
 
             if (!result) {
                 res.status(500).json({
@@ -609,19 +631,27 @@ exports.deleteClienteById = async (req, res) => {
     }
 };
 
+
 // Controladores para Pedido
 exports.createPedido = (req, res) => {
     let pedido = {};
 
     try {
-        pedido.id_cliente = req.body.id_cliente;
-        pedido.fecha_pedido = req.body.fecha_pedido;
-        pedido.total = req.body.total;
-        pedido.id_usuario = req.body.id_usuario;
+        pedido.custId = req.body.custId;
+        pedido.saleDate = req.body.saleDate;
+        pedido.totalInvoiceAmount = req.body.totalInvoiceAmount;
+        pedido.discount = req.body.discount;
+        pedido.paymentNaration = req.body.paymentNaration;
+        pedido.deliveryAddress1 = req.body.deliveryAddress1;
+        pedido.deliveryAddress2 = req.body.deliveryAddress2;
+        pedido.deliveryCity = req.body.deliveryCity;
+        pedido.deliveryPinCode = req.body.deliveryPinCode;
+        pedido.deliveryLandMark = req.body.deliveryLandMark;
+        pedido.isCanceled = req.body.isCanceled;
 
         Pedido.create(pedido).then(result => {
             res.status(200).json({
-                message: "Pedido creado con éxito con id = " + result.id_pedido,
+                message: "Pedido creado con éxito con id = " + result.saleId,
                 pedido: result,
             });
         });
@@ -679,12 +709,19 @@ exports.updatePedidoById = async (req, res) => {
             });
         } else {
             let updatedObject = {
-                id_cliente: req.body.id_cliente,
-                fecha_pedido: req.body.fecha_pedido,
-                total: req.body.total,
-                id_usuario: req.body.id_usuario
+                custId: req.body.custId,
+                saleDate: req.body.saleDate,
+                totalInvoiceAmount: req.body.totalInvoiceAmount,
+                discount: req.body.discount,
+                paymentNaration: req.body.paymentNaration,
+                deliveryAddress1: req.body.deliveryAddress1,
+                deliveryAddress2: req.body.deliveryAddress2,
+                deliveryCity: req.body.deliveryCity,
+                deliveryPinCode: req.body.deliveryPinCode,
+                deliveryLandMark: req.body.deliveryLandMark,
+                isCanceled: req.body.isCanceled
             };
-            let result = await Pedido.update(updatedObject, { returning: true, where: { id_pedido: pedidoId } });
+            let result = await Pedido.update(updatedObject, { returning: true, where: { saleId: pedidoId } });
 
             if (!result) {
                 res.status(500).json({
@@ -730,6 +767,7 @@ exports.deletePedidoById = async (req, res) => {
         });
     }
 };
+
 
 // Controladores para DetallePedido
 exports.createDetallePedido = (req, res) => {

@@ -8,18 +8,15 @@ console.log(controller);
 
 // Rutas para Categoria
 router.post('/api/categorias/create', controller.createCategoria);
-router.get('/api/categorias/all', controller.retrieveAllCategorias);
+router.get('/api/categorias/all', controller.GetAllCategorias);
 router.get('/api/categorias/onebyid/:id', controller.getCategoriaById);
 router.put('/api/categorias/update/:id', controller.updateCategoriaById);
 router.delete('/api/categorias/delete/:id', controller.deleteCategoriaById);
 
 // Rutas para Producto
 router.post('/api/products/create', controller.createProduct);
-router.get('/api/products/all', controller.retrieveAllProducts);
+router.get('/api/products/all', controller.GetAllProducts);
 router.get('/api/products/onebyid/:id', controller.getProductById);
-// router.get('/api/products/filterbyprice', controller.filterProductsByPrice);
-// router.get('/api/products/pagination', controller.paginationProducts);
-// router.get('/api/products/pagefiltersort', controller.pagingFilteringSortingProducts);
 router.put('/api/products/update/:id', controller.updateProductById);
 router.delete('/api/products/delete/:id', controller.deleteProductById);
 

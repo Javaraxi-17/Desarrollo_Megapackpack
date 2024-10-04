@@ -1,43 +1,28 @@
 module.exports = (sequelize, Sequelize) => {
   const Cliente = sequelize.define('Cliente', {
-    id_cliente: {
+    custId: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      field: 'ID_CLIENTE' // Forzando el uso del nombre exacto de la columna
+      field: 'CUST_ID' // Forzando el uso del nombre exacto de la columna
     },
-    nombre: {
+    name: {
       type: Sequelize.STRING(100),
       allowNull: false,
-      field: 'NOMBRE'
+      field: 'NAME' // Nombre exacto de la columna
     },
-    telefono: {
+    mobileNo: {
       type: Sequelize.STRING(20),
-      field: 'TELEFONO'
-    },
-    direccion: {
-      type: Sequelize.TEXT,
-      field: 'DIRECCION'
-    },
-    es_mayorista: {
-      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
-      field: 'ES_MAYORISTA'
+      field: 'MOBILE_NO' // Nombre exacto de la columna
     },
-    id_usuario: {
-      type: Sequelize.INTEGER,
-      references: {
-        model: {
-          tableName: 'USUARIOS',
-          schema: 'MEGAPACK'
-        },
-        key: 'ID_USUARIO'
-      },
-      field: 'ID_USUARIO'
+    password: {
+      type: Sequelize.STRING(255),
+      allowNull: false,
+      field: 'PASSWORD' // Nombre exacto de la columna
     }
   }, {
-    tableName: 'CLIENTES',
+    tableName: 'CLIENTES', // Nombre exacto de la tabla
     schema: 'MEGAPACK',
     timestamps: false
   });
