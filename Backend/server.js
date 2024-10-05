@@ -44,6 +44,9 @@ db.Categoria.sync({ force: true })  // Forzar recreación de la tabla de Categor
     return db.DetallePedido.sync({ force: true });  // Forzar recreación de la tabla de DetallePedido
   })
   .then(() => {
+    return db.Oferta.sync({ force: true });  // Forzar recreación de la tabla de DetallePedido
+  })
+  .then(() => {
     console.log('Tablas recreadas correctamente con force: true');
     
     // Crear un Servidor

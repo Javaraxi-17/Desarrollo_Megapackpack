@@ -55,4 +55,11 @@ router.get('/api/detalles-pedido/onebyid/:id', controller.getDetallePedidoById);
 router.put('/api/detalles-pedido/update/:id', controller.updateDetallePedidoById);
 router.delete('/api/detalles-pedido/delete/:id', controller.deleteDetallePedidoById);
 
+// Rutas para Oferta
+router.post('/api/ofertas/create', controller.createOferta);  // Crear una nueva oferta
+router.get('/api/ofertas/all', controller.retrieveAllOfertas);  // Obtener todas las ofertas
+router.get('/api/ofertas/onebyid/:id', controller.getOfertaById);  // Obtener oferta por ID
+router.put('/api/ofertas/update/:id', controller.updateOfertaById);  // Actualizar oferta por ID
+router.delete('/api/ofertas/delete/:id', controller.deleteOfertaById);  // Eliminar oferta por ID
+
 module.exports = router;

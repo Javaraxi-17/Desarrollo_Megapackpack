@@ -892,3 +892,129 @@ exports.deleteDetallePedidoById = async (req, res) => {
         });
     }
 };
+
+// Crear una nueva oferta
+exports.createOferta = (req, res) => {
+    let oferta = {};
+
+    try {
+        oferta.offerName = req.body.offerName;
+        oferta.offerImageUrl = req.body.offerImageUrl;
+        oferta.isActive = req.body.isActive;
+        oferta.offerPercentDiscount = req.body.offerPercentDiscount;
+
+        Oferta.create(oferta).then(result => {
+            res.status(200).json({
+                message: "Oferta creada con éxito con id = " + result.offerId,
+                oferta: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+// Obtener todas las ofertas
+exports.retrieveAllOfertas = (req, res) => {
+    Oferta.findAll()
+        .then(ofertaInfos => {
+            res.status(200).json({
+                message: "Ofertas recuperadas con éxito!",
+                ofertas: ofertaInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+// Obtener una oferta por ID
+exports.getOfertaById = (req, res) => {
+    let ofertaId = req.params.id;
+    Oferta.findByPk(ofertaId)
+        .then(oferta => {
+            res.status(200).json({
+                message: "Oferta recuperada con éxito con id = " + ofertaId,
+                oferta: oferta
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+// Actualizar una oferta por ID
+exports.updateOfertaById = async (req, res) => {
+    try {
+        let ofertaId = req.params.id;
+        let oferta = await Oferta.findByPk(ofertaId);
+
+        if (!oferta) {
+            res.status(404).json({
+                message: "No se encontró la oferta para actualizar con id = " + ofertaId,
+                oferta: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                offerName: req.body.offerName,
+                offerImageUrl: req.body.offerImageUrl,
+                isActive: req.body.isActive,
+                offerPercentDiscount: req.body.offerPercentDiscount
+            };
+            let result = await Oferta.update(updatedObject, { returning: true, where: { offerId: ofertaId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar la oferta con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Oferta actualizada con éxito con id = " + ofertaId,
+                oferta: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar la oferta con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+// Eliminar una oferta por ID
+exports.deleteOfertaById = async (req, res) => {
+    try {
+        let ofertaId = req.params.id;
+        let oferta = await Oferta.findByPk(ofertaId);
+
+        if (!oferta) {
+            res.status(404).json({
+                message: "No existe una oferta con id = " + ofertaId,
+                error: "404",
+            });
+        } else {
+            await oferta.destroy();
+            res.status(200).json({
+                message: "Oferta eliminada con éxito con id = " + ofertaId,
+                oferta: oferta,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar la oferta con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};

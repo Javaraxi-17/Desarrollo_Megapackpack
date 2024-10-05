@@ -29,5 +29,6 @@ db.Cliente = require('../models/cliente.model.js')(sequelize, Sequelize);
 db.Pedido = require('../models/pedido.model.js')(sequelize, Sequelize);
 db.DetallePedido = require('../models/detallePedido.model.js')(sequelize, Sequelize);
 db.Producto = require('../models/producto.model.js')(sequelize, Sequelize);
+db.Oferta = require('../models/oferta.model.js')(sequelize, Sequelize);  // Agregar el modelo Oferta
 
 module.exports = db;
