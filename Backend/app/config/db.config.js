@@ -30,5 +30,6 @@ db.Pedido = require('../models/pedido.model.js')(sequelize, Sequelize);
 db.DetallePedido = require('../models/detallePedido.model.js')(sequelize, Sequelize);
 db.Producto = require('../models/producto.model.js')(sequelize, Sequelize);
 db.Oferta = require('../models/oferta.model.js')(sequelize, Sequelize);  // Agregar el modelo Oferta
+db.Carrito = require('../models/carrito.model.js')(sequelize, Sequelize); // NUEVO
 
 module.exports = db;

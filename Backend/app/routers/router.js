@@ -7,18 +7,18 @@ const controller = require('../controllers/controller.js');
 console.log(controller);
 
 // Rutas para Categoria
-router.post('/api/categorias/create', controller.createCategoria);
-router.get('/api/categorias/all', controller.GetAllCategorias);
+router.post('/api/categorias/create', controller.CreateNewCategory);
+router.get('/api/categorias/all', controller.GetAllCategory);
 router.get('/api/categorias/onebyid/:id', controller.getCategoriaById);
-router.put('/api/categorias/update/:id', controller.updateCategoriaById);
-router.delete('/api/categorias/delete/:id', controller.deleteCategoriaById);
+router.put('/api/categorias/update/:id', controller.UpdateCategoriaById);
+router.delete('/api/categorias/delete/:id', controller.DeleteCategoriaById);
 
 // Rutas para Producto
-router.post('/api/products/create', controller.createProduct);
+router.post('/api/products/create', controller.CreateProduct);
 router.get('/api/products/all', controller.GetAllProducts);
-router.get('/api/products/onebyid/:id', controller.getProductById);
-router.put('/api/products/update/:id', controller.updateProductById);
-router.delete('/api/products/delete/:id', controller.deleteProductById);
+router.get('/api/products/onebyid/:id', controller.GetProductById);
+router.put('/api/products/update/:id', controller.UpdateProduct);
+router.delete('/api/products/delete/:id', controller.DeleteProductById);
 
 // Rutas para Rol
 router.post('/api/roles/create', controller.createRol);
@@ -61,5 +61,12 @@ router.get('/api/ofertas/all', controller.retrieveAllOfertas);  // Obtener todas
 router.get('/api/ofertas/onebyid/:id', controller.getOfertaById);  // Obtener oferta por ID
 router.put('/api/ofertas/update/:id', controller.updateOfertaById);  // Actualizar oferta por ID
 router.delete('/api/ofertas/delete/:id', controller.deleteOfertaById);  // Eliminar oferta por ID
+
+// Rutas para Carrito
+router.post('/create-carrito', controller.createCarrito);
+router.get('/get-carritos', controller.GetAllCartItems);
+router.get('/get-carrito/:id', controller.getCarritoById);
+router.put('/update-carrito/:id', controller.updateCarritoById);
+router.delete('/delete-carrito/:id', controller.deleteCarritoById);
 
 module.exports = router;

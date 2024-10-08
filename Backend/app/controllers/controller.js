@@ -6,10 +6,12 @@ const Usuario = db.Usuario;
 const Cliente = db.Cliente;
 const Pedido = db.Pedido;
 const DetallePedido = db.DetallePedido;
+const Oferta = db.Oferta;
+const Carrito = db.Carrito;
 
 // Controladores para Categoria
 // Crear nueva categoría
-exports.createCategoria = (req, res) => {
+exports.CreateNewCategory = (req, res) => {
     let categoria = {};
 
     try {
@@ -32,7 +34,7 @@ exports.createCategoria = (req, res) => {
 };
 
 // Obtener todas las categorías
-exports.GetAllCategorias = (req, res) => {
+exports.GetAllCategory = (req, res) => {
     Categoria.findAll()
         .then(categoriaInfos => {
             res.status(200).json({
@@ -73,7 +75,7 @@ exports.getCategoriaById = (req, res) => {
 };
 
 // Actualizar categoría por ID
-exports.updateCategoriaById = async (req, res) => {
+exports.UpdateCategoriaById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
         let categoria = await Categoria.findByPk(categoriaId);
@@ -113,7 +115,7 @@ exports.updateCategoriaById = async (req, res) => {
 };
 
 // Eliminar categoría por ID
-exports.deleteCategoriaById = async (req, res) => {
+exports.DeleteCategoriaById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
         let categoria = await Categoria.findByPk(categoriaId);
@@ -140,7 +142,7 @@ exports.deleteCategoriaById = async (req, res) => {
 
 // Controladores para Producto
 
-exports.createProduct = (req, res) => {
+exports.CreateProduct = (req, res) => {
     let product = {};
 
     try {
@@ -185,7 +187,7 @@ exports.GetAllProducts = (req, res) => {
         });
 };
 
-exports.getProductById = (req, res) => {
+exports.GetProductById = (req, res) => {
     let productId = req.params.id;
     Producto.findByPk(productId)
         .then(product => {
@@ -202,7 +204,7 @@ exports.getProductById = (req, res) => {
         });
 };
 
-exports.updateProductById = async (req, res) => {
+exports.UpdateProduct = async (req, res) => {
     try {
         let productId = req.params.id;
         let product = await Producto.findByPk(productId);
@@ -248,7 +250,7 @@ exports.updateProductById = async (req, res) => {
     }
 };
 
-exports.deleteProductById = async (req, res) => {
+exports.DeleteProductById = async (req, res) => {
     try {
         let productId = req.params.id;
         let product = await Producto.findByPk(productId);
@@ -1018,3 +1020,130 @@ exports.deleteOfertaById = async (req, res) => {
         });
     }
 };
+
+// Crear un nuevo Carrito
+exports.createCarrito = (req, res) => {
+    let carrito = {};
+  
+    try {
+      carrito.custId = req.body.custId;
+      carrito.productId = req.body.productId;
+      carrito.quantity = req.body.quantity;
+      carrito.addedDate = req.body.addedDate;
+  
+      Carrito.create(carrito).then(result => {
+        res.status(200).json({
+          message: "Carrito creado con éxito con id = " + result.cartId,
+          carrito: result,
+        });
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Error!",
+        error: error.message
+      });
+    }
+  };
+  
+  // Obtener todos los carritos
+  exports.GetAllCartItems = (req, res) => {
+    Carrito.findAll()
+      .then(carritoInfos => {
+        res.status(200).json({
+          message: "Carritos recuperados con éxito!",
+          carritos: carritoInfos
+        });
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: "Error!",
+          error: error
+        });
+      });
+  };
+  
+  // Obtener un Carrito por ID
+  exports.getCarritoById = (req, res) => {
+    let carritoId = req.params.id;
+    Carrito.findByPk(carritoId)
+      .then(carrito => {
+        res.status(200).json({
+          message: "Carrito recuperado con éxito con id = " + carritoId,
+          carrito: carrito
+        });
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: "Error!",
+          error: error
+        });
+      });
+  };
+  
+  // Actualizar Carrito por ID
+  exports.updateCarritoById = async (req, res) => {
+    try {
+      let carritoId = req.params.id;
+      let carrito = await Carrito.findByPk(carritoId);
+  
+      if (!carrito) {
+        res.status(404).json({
+          message: "No se encontró el carrito para actualizar con id = " + carritoId,
+          carrito: "",
+          error: "404"
+        });
+      } else {
+        let updatedObject = {
+          custId: req.body.custId,
+          productId: req.body.productId,
+          quantity: req.body.quantity,
+          addedDate: req.body.addedDate
+        };
+  
+        let result = await Carrito.update(updatedObject, { returning: true, where: { cartId: carritoId } });
+  
+        if (!result) {
+          res.status(500).json({
+            message: "Error -> No se puede actualizar el carrito con id = " + req.params.id,
+            error: "No se pudo actualizar",
+          });
+        }
+  
+        res.status(200).json({
+          message: "Carrito actualizado con éxito con id = " + carritoId,
+          carrito: updatedObject,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error -> No se puede actualizar el carrito con id = " + req.params.id,
+        error: error.message
+      });
+    }
+  };
+  
+  // Eliminar Carrito por ID
+  exports.deleteCarritoById = async (req, res) => {
+    try {
+      let carritoId = req.params.id;
+      let carrito = await Carrito.findByPk(carritoId);
+  
+      if (!carrito) {
+        res.status(404).json({
+          message: "No existe un carrito con id = " + carritoId,
+          error: "404",
+        });
+      } else {
+        await carrito.destroy();
+        res.status(200).json({
+          message: "Carrito eliminado con éxito con id = " + carritoId,
+          carrito: carrito,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Error -> No se puede eliminar el carrito con id = " + req.params.id,
+        error: error.message,
+      });
+    }
+  };
