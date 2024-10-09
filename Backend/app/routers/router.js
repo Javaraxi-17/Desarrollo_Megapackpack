@@ -7,18 +7,18 @@ const controller = require('../controllers/controller.js');
 console.log(controller);
 
 // Rutas para Categoria
-router.post('/api/categorias/create', controller.CreateNewCategory);
-router.get('/api/categorias/all', controller.GetAllCategory);
-router.get('/api/categorias/onebyid/:id', controller.getCategoriaById);
-router.put('/api/categorias/update/:id', controller.UpdateCategoriaById);
-router.delete('/api/categorias/delete/:id', controller.DeleteCategoriaById);
+router.post('/api/BigBasket/CreateCategory', controller.CreateNewCategory);
+router.get('/api/BigBasket/GetAllCategory', controller.GetAllCategory);
+router.get('/api/BigBasket/GetCategoryById/:id', controller.GetCategoryById);
+router.put('/api/BigBasket/UpdateCategory/:id', controller.UpdateCategoryById);
+router.delete('/api/BigBasket/DeleteCategoryById/:id', controller.DeleteCategoryById);
 
 // Rutas para Producto
-router.post('/api/products/create', controller.CreateProduct);
-router.get('/api/products/all', controller.GetAllProducts);
-router.get('/api/products/onebyid/:id', controller.GetProductById);
-router.put('/api/products/update/:id', controller.UpdateProduct);
-router.delete('/api/products/delete/:id', controller.DeleteProductById);
+router.post('/api/BigBasket/CreateProduct', controller.CreateProduct);
+router.get('/api/BigBasket/GetAllProducts', controller.GetAllProducts);
+router.get('/api/BigBasket/GetProductById/:id', controller.GetProductById);
+router.put('/api/BigBasket/UpdateProduct/:id', controller.UpdateProduct);
+router.delete('/api/BigBasket/DeleteProductById/:id', controller.DeleteProductById);
 
 // Rutas para Rol
 router.post('/api/roles/create', controller.createRol);
@@ -35,11 +35,12 @@ router.put('/api/usuarios/update/:id', controller.updateUsuarioById);
 router.delete('/api/usuarios/delete/:id', controller.deleteUsuarioById);
 
 // Rutas para Cliente
-router.post('/api/clientes/create', controller.createCliente);
-router.get('/api/clientes/all', controller.retrieveAllClientes);
-router.get('/api/clientes/onebyid/:id', controller.getClienteById);
-router.put('/api/clientes/update/:id', controller.updateClienteById);
-router.delete('/api/clientes/delete/:id', controller.deleteClienteById);
+router.post('/api/BigBasket/CreateClient', controller.CreateCustomers);
+router.get('/api/BigBasket/GetAllClients', controller.GetAllCustomers);
+router.get('/api/BigBasket/GetClientById/:id', controller.GetCustomerById);
+router.put('/api/BigBasket/UpdateClient/:id', controller.UpdateCustomerById);
+router.delete('/api/BigBasket/DeleteClientById/:id', controller.DeleteCustomerById);
+
 
 // Rutas para Pedido
 router.post('/api/pedidos/create', controller.createPedido);

@@ -1,6 +1,6 @@
 export const Constant = {
-  API_END_POINT: 'https://freeapi.gerasim.in/api/BigBasket/',
-  API_END_POINT_USER: 'http://freeapi.gerasim.in/api/User/',
+  API_END_POINT: 'http://localhost:3001/api/BigBasket/',
+  API_END_POINT_USER: 'http://localhost:3001/api/User/',
   METHODS: {
     GET_ALL_PRODUCT: 'GetAllProducts',
     GET_PRODUCT_BY_ID: 'GetProductById?id=',

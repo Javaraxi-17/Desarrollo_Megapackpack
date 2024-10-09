@@ -11,6 +11,7 @@ const Carrito = db.Carrito;
 
 // Controladores para Categoria
 // Crear nueva categoría
+// Crear nueva categoría
 exports.CreateNewCategory = (req, res) => {
     let categoria = {};
 
@@ -21,70 +22,97 @@ exports.CreateNewCategory = (req, res) => {
 
         Categoria.create(categoria).then(result => {
             res.status(200).json({
-                message: "Categoría creada con éxito con id = " + result.categoryId,
-                categoria: result,
+                message: "Categoría creada con éxito",
+                result: true,
+                data: {
+                    categoryId: result.categoryId,
+                    categoryName: result.categoryName,
+                    parentCategoryId: result.parentCategoryId || 0,
+                    userId: result.userId || null
+                }
             });
         });
     } catch (error) {
         res.status(500).json({
-            message: "Error!",
+            message: "Error al crear la categoría",
+            result: false,
             error: error.message
         });
     }
 };
 
+
 // Obtener todas las categorías
 exports.GetAllCategory = (req, res) => {
     Categoria.findAll()
         .then(categoriaInfos => {
+            const formattedCategories = categoriaInfos.map(categoria => ({
+                categoryId: categoria.categoryId,
+                categoryName: categoria.categoryName,
+                parentCategoryId: categoria.parentCategoryId || 0,  // Si es null, asigna 0
+                userId: categoria.userId || null  // Deja null si no tiene valor
+            }));
+
             res.status(200).json({
-                message: "Categorías recuperadas con éxito!",
-                categorias: categoriaInfos
+                message: "",
+                result: true,
+                data: formattedCategories
             });
         })
         .catch(error => {
             res.status(500).json({
                 message: "Error!",
-                error: error
+                result: false,
+                error: error.message
             });
         });
 };
 
 // Obtener categoría por ID
-exports.getCategoriaById = (req, res) => {
+exports.GetCategoryById = (req, res) => {
     let categoriaId = req.params.id;
     Categoria.findByPk(categoriaId)
         .then(categoria => {
             if (categoria) {
                 res.status(200).json({
-                    message: "Categoría recuperada con éxito con id = " + categoriaId,
-                    categoria: categoria
+                    message: "Categoría recuperada con éxito",
+                    result: true,
+                    data: {
+                        categoryId: categoria.categoryId,
+                        categoryName: categoria.categoryName,
+                        parentCategoryId: categoria.parentCategoryId || 0,
+                        userId: categoria.userId || null
+                    }
                 });
             } else {
                 res.status(404).json({
-                    message: "Categoría no encontrada con id = " + categoriaId,
+                    message: "Categoría no encontrada",
+                    result: false,
+                    data: null
                 });
             }
         })
         .catch(error => {
             res.status(500).json({
-                message: "Error!",
-                error: error
+                message: "Error al obtener la categoría",
+                result: false,
+                error: error.message
             });
         });
 };
 
+
 // Actualizar categoría por ID
-exports.UpdateCategoriaById = async (req, res) => {
+exports.UpdateCategoryById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
         let categoria = await Categoria.findByPk(categoriaId);
 
         if (!categoria) {
             res.status(404).json({
-                message: "No se encontró la categoría para actualizar con id = " + categoriaId,
-                categoria: "",
-                error: "404"
+                message: "No se encontró la categoría",
+                result: false,
+                data: null
             });
         } else {
             let updatedObject = {
@@ -96,46 +124,58 @@ exports.UpdateCategoriaById = async (req, res) => {
 
             if (result) {
                 res.status(200).json({
-                    message: "Categoría actualizada con éxito con id = " + categoriaId,
-                    categoria: updatedObject,
+                    message: "Categoría actualizada con éxito",
+                    result: true,
+                    data: updatedObject
                 });
             } else {
                 res.status(500).json({
-                    message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
-                    error: "No se pudo actualizar",
+                    message: "Error al actualizar la categoría",
+                    result: false,
+                    error: "No se pudo actualizar"
                 });
             }
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
+            message: "Error al actualizar la categoría",
+            result: false,
             error: error.message
         });
     }
 };
 
+
 // Eliminar categoría por ID
-exports.DeleteCategoriaById = async (req, res) => {
+exports.DeleteCategoryById = async (req, res) => {
     try {
         let categoriaId = req.params.id;
         let categoria = await Categoria.findByPk(categoriaId);
 
         if (!categoria) {
             res.status(404).json({
-                message: "No existe una categoría con id = " + categoriaId,
-                error: "404",
+                message: "No existe una categoría con ese ID",
+                result: false,
+                data: null
             });
         } else {
             await categoria.destroy();
             res.status(200).json({
-                message: "Categoría eliminada con éxito con id = " + categoriaId,
-                categoria: categoria,
+                message: "Categoría eliminada con éxito",
+                result: true,
+                data: {
+                    categoryId: categoria.categoryId,
+                    categoryName: categoria.categoryName,
+                    parentCategoryId: categoria.parentCategoryId || 0,
+                    userId: categoria.userId || null
+                }
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede eliminar la categoría con id = " + req.params.id,
-            error: error.message,
+            message: "Error al eliminar la categoría",
+            result: false,
+            error: error.message
         });
     }
 };
@@ -143,23 +183,25 @@ exports.DeleteCategoriaById = async (req, res) => {
 // Controladores para Producto
 
 exports.CreateProduct = (req, res) => {
+    console.log(req.body);  // Verifica el contenido de req.body
+
     let product = {};
 
     try {
-        product.ProductSku = req.body.ProductSku;
-        product.ProductName = req.body.ProductName;
-        product.ProductPrice = req.body.ProductPrice;
-        product.ProductShortName = req.body.ProductShortName;
-        product.ProductDescription = req.body.ProductDescription;
-        product.CreatedDate = req.body.CreatedDate || new Date();
-        product.DeliveryTimeSpan = req.body.DeliveryTimeSpan;
-        product.CategoryId = req.body.CategoryId;
-        product.ProductImageUrl = req.body.ProductImageUrl;
-        product.UserId = req.body.UserId;
+        product.productSku = req.body.productSku;
+        product.productName = req.body.productName;
+        product.productPrice = req.body.productPrice;
+        product.productShortName = req.body.productShortName;
+        product.productDescription = req.body.productDescription;
+        product.createdDate = req.body.createdDate || new Date();
+        product.deliveryTimeSpan = req.body.deliveryTimeSpan;
+        product.categoryId = req.body.categoryId;
+        product.productImageUrl = req.body.productImageUrl;
+        product.userId = req.body.userId;
 
         Producto.create(product).then(result => {
             res.status(200).json({
-                message: "Producto creado con éxito con id = " + result.ProductId,
+                message: "Producto creado con éxito con id = " + result.productId,
                 producto: result,
             });
         });
@@ -514,7 +556,7 @@ exports.deleteUsuarioById = async (req, res) => {
 };
 
 // Controladores para Cliente
-exports.createCliente = (req, res) => {
+exports.CreateCustomers = (req, res) => {
     let cliente = {};
 
     try {
@@ -536,7 +578,7 @@ exports.createCliente = (req, res) => {
     }
 };
 
-exports.retrieveAllClientes = (req, res) => {
+exports.GetAllCustomers = (req, res) => {
     Cliente.findAll()
         .then(clienteInfos => {
             res.status(200).json({
@@ -552,7 +594,7 @@ exports.retrieveAllClientes = (req, res) => {
         });
 };
 
-exports.getClienteById = (req, res) => {
+exports.GetCustomerById = (req, res) => {
     let clienteId = req.params.id;
     Cliente.findByPk(clienteId)
         .then(cliente => {
@@ -569,7 +611,7 @@ exports.getClienteById = (req, res) => {
         });
 };
 
-exports.updateClienteById = async (req, res) => {
+exports.UpdateCustomerById = async (req, res) => {
     try {
         let clienteId = req.params.id;
         let cliente = await Cliente.findByPk(clienteId);
@@ -608,7 +650,7 @@ exports.updateClienteById = async (req, res) => {
     }
 };
 
-exports.deleteClienteById = async (req, res) => {
+exports.DeleteCustomerById = async (req, res) => {
     try {
         let clienteId = req.params.id;
         let cliente = await Cliente.findByPk(clienteId);
