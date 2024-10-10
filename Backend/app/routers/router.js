@@ -7,7 +7,7 @@ const controller = require('../controllers/controller.js');
 console.log(controller);
 
 // Rutas para Categoria
-router.post('/api/BigBasket/CreateCategory', controller.CreateNewCategory);
+router.post('/api/BigBasket/CreateNewCategory', controller.CreateNewCategory);
 router.get('/api/BigBasket/GetAllCategory', controller.GetAllCategory);
 router.get('/api/BigBasket/GetCategoryById/:id', controller.GetCategoryById);
 router.put('/api/BigBasket/UpdateCategory/:id', controller.UpdateCategoryById);
@@ -19,6 +19,7 @@ router.get('/api/BigBasket/GetAllProducts', controller.GetAllProducts);
 router.get('/api/BigBasket/GetProductById/:id', controller.GetProductById);
 router.put('/api/BigBasket/UpdateProduct/:id', controller.UpdateProduct);
 router.delete('/api/BigBasket/DeleteProductById/:id', controller.DeleteProductById);
+router.get('/BigBasket/GetAllProductsByCategoryId/:categoryId', controller.GetAllProductsByCategoryId);
 
 // Rutas para Rol
 router.post('/api/roles/create', controller.createRol);

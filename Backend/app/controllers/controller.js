@@ -10,29 +10,29 @@ const Oferta = db.Oferta;
 const Carrito = db.Carrito;
 
 // Controladores para Categoria
+
 // Crear nueva categoría
-// Crear nueva categoría
-exports.CreateNewCategory = (req, res) => {
-    let categoria = {};
+exports.CreateNewCategory = async (req, res) => {
+    let categoria = {
+        categoryName: req.body.categoryName,
+        parentCategoryId: req.body.parentCategoryId || null,  // Puede ser null
+        userId: req.body.userId
+    };
 
     try {
-        categoria.categoryName = req.body.categoryName;
-        categoria.parentCategoryId = req.body.parentCategoryId || null;  // Puede ser null
-        categoria.userId = req.body.userId;
-
-        Categoria.create(categoria).then(result => {
-            res.status(200).json({
-                message: "Categoría creada con éxito",
-                result: true,
-                data: {
-                    categoryId: result.categoryId,
-                    categoryName: result.categoryName,
-                    parentCategoryId: result.parentCategoryId || 0,
-                    userId: result.userId || null
-                }
-            });
+        const result = await Categoria.create(categoria);
+        res.status(201).json({
+            message: "Categoría creada con éxito",
+            result: true,
+            data: {
+                categoryId: result.categoryId,
+                categoryName: result.categoryName,
+                parentCategoryId: result.parentCategoryId || 0,  // Si es null, asigna 0
+                userId: result.userId || null
+            }
         });
     } catch (error) {
+        console.error("Error al crear la categoría:", error);
         res.status(500).json({
             message: "Error al crear la categoría",
             result: false,
@@ -42,63 +42,62 @@ exports.CreateNewCategory = (req, res) => {
 };
 
 
-// Obtener todas las categorías
-exports.GetAllCategory = (req, res) => {
-    Categoria.findAll()
-        .then(categoriaInfos => {
-            const formattedCategories = categoriaInfos.map(categoria => ({
-                categoryId: categoria.categoryId,
-                categoryName: categoria.categoryName,
-                parentCategoryId: categoria.parentCategoryId || 0,  // Si es null, asigna 0
-                userId: categoria.userId || null  // Deja null si no tiene valor
-            }));
 
-            res.status(200).json({
-                message: "",
-                result: true,
-                data: formattedCategories
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                result: false,
-                error: error.message
-            });
+// Obtener todas las categorías
+exports.GetAllCategory = async (req, res) => {
+    try {
+        const categoriaInfos = await Categoria.findAll();
+        const formattedCategories = categoriaInfos.map(categoria => ({
+            categoryId: categoria.categoryId,
+            categoryName: categoria.categoryName,
+            parentCategoryId: categoria.parentCategoryId || 0,  // Si es null, asigna 0
+            userId: categoria.userId || null
+        }));
+
+        res.status(200).json({
+            message: "Categorías recuperadas con éxito",
+            result: true,
+            data: formattedCategories
         });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error al recuperar las categorías",
+            result: false,
+            error: error.message
+        });
+    }
 };
 
 // Obtener categoría por ID
-exports.GetCategoryById = (req, res) => {
+exports.GetCategoryById = async (req, res) => {
     let categoriaId = req.params.id;
-    Categoria.findByPk(categoriaId)
-        .then(categoria => {
-            if (categoria) {
-                res.status(200).json({
-                    message: "Categoría recuperada con éxito",
-                    result: true,
-                    data: {
-                        categoryId: categoria.categoryId,
-                        categoryName: categoria.categoryName,
-                        parentCategoryId: categoria.parentCategoryId || 0,
-                        userId: categoria.userId || null
-                    }
-                });
-            } else {
-                res.status(404).json({
-                    message: "Categoría no encontrada",
-                    result: false,
-                    data: null
-                });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error al obtener la categoría",
-                result: false,
-                error: error.message
+    try {
+        const categoria = await Categoria.findByPk(categoriaId);
+        if (categoria) {
+            res.status(200).json({
+                message: "Categoría recuperada con éxito",
+                result: true,
+                data: {
+                    categoryId: categoria.categoryId,
+                    categoryName: categoria.categoryName,
+                    parentCategoryId: categoria.parentCategoryId || 0,
+                    userId: categoria.userId || null
+                }
             });
+        } else {
+            res.status(404).json({
+                message: "Categoría no encontrada",
+                result: false,
+                data: null
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error al recuperar la categoría",
+            result: false,
+            error: error.message
         });
+    }
 };
 
 
@@ -109,33 +108,34 @@ exports.UpdateCategoryById = async (req, res) => {
         let categoria = await Categoria.findByPk(categoriaId);
 
         if (!categoria) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "No se encontró la categoría",
                 result: false,
                 data: null
             });
-        } else {
-            let updatedObject = {
-                categoryName: req.body.categoryName,
-                parentCategoryId: req.body.parentCategoryId || null,  // Permitir null si no se especifica
-                userId: req.body.userId
-            };
-            let result = await Categoria.update(updatedObject, { returning: true, where: { categoryId: categoriaId } });
-
-            if (result) {
-                res.status(200).json({
-                    message: "Categoría actualizada con éxito",
-                    result: true,
-                    data: updatedObject
-                });
-            } else {
-                res.status(500).json({
-                    message: "Error al actualizar la categoría",
-                    result: false,
-                    error: "No se pudo actualizar"
-                });
-            }
         }
+
+        let updatedObject = {
+            categoryName: req.body.categoryName,
+            parentCategoryId: req.body.parentCategoryId || null,  // Permitir null si no se especifica
+            userId: req.body.userId
+        };
+
+        let [updated] = await Categoria.update(updatedObject, { returning: true, where: { categoryId: categoriaId } });
+
+        if (!updated) {
+            return res.status(500).json({
+                message: "No se pudo actualizar la categoría",
+                result: false,
+                error: "No se pudo actualizar la categoría con id = " + categoriaId
+            });
+        }
+
+        res.status(200).json({
+            message: "Categoría actualizada con éxito",
+            result: true,
+            data: updatedObject
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error al actualizar la categoría",
@@ -146,6 +146,7 @@ exports.UpdateCategoryById = async (req, res) => {
 };
 
 
+
 // Eliminar categoría por ID
 exports.DeleteCategoryById = async (req, res) => {
     try {
@@ -153,24 +154,24 @@ exports.DeleteCategoryById = async (req, res) => {
         let categoria = await Categoria.findByPk(categoriaId);
 
         if (!categoria) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "No existe una categoría con ese ID",
                 result: false,
                 data: null
             });
-        } else {
-            await categoria.destroy();
-            res.status(200).json({
-                message: "Categoría eliminada con éxito",
-                result: true,
-                data: {
-                    categoryId: categoria.categoryId,
-                    categoryName: categoria.categoryName,
-                    parentCategoryId: categoria.parentCategoryId || 0,
-                    userId: categoria.userId || null
-                }
-            });
         }
+
+        await categoria.destroy();
+        res.status(200).json({
+            message: "Categoría eliminada con éxito",
+            result: true,
+            data: {
+                categoryId: categoria.categoryId,
+                categoryName: categoria.categoryName,
+                parentCategoryId: categoria.parentCategoryId || 0,
+                userId: categoria.userId || null
+            }
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error al eliminar la categoría",
@@ -180,71 +181,163 @@ exports.DeleteCategoryById = async (req, res) => {
     }
 };
 
+
+
 // Controladores para Producto
 
-exports.CreateProduct = (req, res) => {
-    console.log(req.body);  // Verifica el contenido de req.body
-
-    let product = {};
-
+exports.CreateProduct = async (req, res) => {
     try {
-        product.productSku = req.body.productSku;
-        product.productName = req.body.productName;
-        product.productPrice = req.body.productPrice;
-        product.productShortName = req.body.productShortName;
-        product.productDescription = req.body.productDescription;
-        product.createdDate = req.body.createdDate || new Date();
-        product.deliveryTimeSpan = req.body.deliveryTimeSpan;
-        product.categoryId = req.body.categoryId;
-        product.productImageUrl = req.body.productImageUrl;
-        product.userId = req.body.userId;
-
-        Producto.create(product).then(result => {
-            res.status(200).json({
-                message: "Producto creado con éxito con id = " + result.productId,
-                producto: result,
-            });
+        const newProduct = await Producto.create({
+            productSku: req.body.productSku,
+            productName: req.body.productName,
+            productPrice: req.body.productPrice,
+            productShortName: req.body.productShortName,
+            productDescription: req.body.productDescription,
+            createdDate: req.body.createdDate,
+            deliveryTimeSpan: req.body.deliveryTimeSpan,
+            categoryId: req.body.categoryId,
+            productImageUrl: req.body.productImageUrl,
+            userId: req.body.userId
+        });
+        res.status(201).json({
+            message: "Producto creado con éxito",
+            result: true,
+            data: newProduct
         });
     } catch (error) {
+        console.error("Error al crear el producto:", error);
         res.status(500).json({
-            message: "Error!",
+            message: "Error al crear el producto",
+            result: false,
             error: error.message
         });
     }
 };
 
+// Obtener todos los productos por categoryId con el nombre de la categoría
+exports.GetAllProductsByCategoryId = async (req, res) => {
+    let categoryId = req.params.categoryId;
+
+    try {
+        const products = await Producto.findAll({
+            where: { categoryId: categoryId },
+            include: [{
+                model: Categoria,  // Asumiendo que tienes una relación definida entre Producto y Categoria
+                as: 'categoria',   // Alias de la relación (debe coincidir con el definido en el modelo)
+                attributes: ['categoryName']  // Solo incluye el nombre de la categoría
+            }]
+        });
+
+        if (products.length > 0) {
+            const formattedProducts = products.map(product => ({
+                productId: product.productId,
+                productSku: product.productSku,
+                productName: product.productName,
+                productPrice: product.productPrice,
+                productShortName: product.productShortName || null,
+                productDescription: product.productDescription || null,
+                createdDate: product.createdDate || null,
+                deliveryTimeSpan: product.deliveryTimeSpan || null,
+                categoryId: product.categoryId || null,
+                productImageUrl: product.productImageUrl || null,
+                categoryName: product.categoria ? product.categoria.categoryName : null  // Accede al nombre de la categoría
+            }));
+
+            res.status(200).json({
+                message: "",
+                result: true,
+                data: formattedProducts
+            });
+        } else {
+            res.status(404).json({
+                message: "No se encontraron productos para esta categoría",
+                result: false,
+                data: []
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error al recuperar los productos",
+            result: false,
+            error: error.message
+        });
+    }
+};
+
+
+
 exports.GetAllProducts = (req, res) => {
     Producto.findAll()
         .then(productInfos => {
+            const formattedProducts = productInfos.map(product => ({
+                productId: product.productId,
+                productSku: product.productSku,
+                productName: product.productName,
+                productPrice: product.productPrice,
+                productShortName: product.productShortName || null,
+                productDescription: product.productDescription || null,
+                createdDate: product.createdDate || null,
+                deliveryTimeSpan: product.deliveryTimeSpan || null,
+                categoryId: product.categoryId || null,
+                productImageUrl: product.productImageUrl || null,
+                userId: product.userId || null
+            }));
+
             res.status(200).json({
                 message: "Productos recuperados con éxito!",
-                productos: productInfos
+                result: true,
+                data: formattedProducts
             });
         })
         .catch(error => {
             res.status(500).json({
-                message: "Error!",
-                error: error
+                message: "Error al recuperar los productos",
+                result: false,
+                error: error.message
             });
         });
 };
+
 
 exports.GetProductById = (req, res) => {
     let productId = req.params.id;
     Producto.findByPk(productId)
         .then(product => {
-            res.status(200).json({
-                message: "Producto recuperado con éxito con id = " + productId,
-                producto: product
-            });
+            if (product) {
+                res.status(200).json({
+                    message: "Producto recuperado con éxito",
+                    result: true,
+                    data: {
+                        productId: product.productId,
+                        productSku: product.productSku,
+                        productName: product.productName,
+                        productPrice: product.productPrice,
+                        productShortName: product.productShortName || null,
+                        productDescription: product.productDescription || null,
+                        createdDate: product.createdDate || null,
+                        deliveryTimeSpan: product.deliveryTimeSpan || null,
+                        categoryId: product.categoryId || null,
+                        productImageUrl: product.productImageUrl || null,
+                        userId: product.userId || null
+                    }
+                });
+            } else {
+                res.status(404).json({
+                    message: "Producto no encontrado",
+                    result: false,
+                    data: null
+                });
+            }
         })
         .catch(error => {
             res.status(500).json({
-                message: "Error!",
-                error: error
+                message: "Error al recuperar el producto",
+                result: false,
+                error: error.message
             });
         });
 };
+
 
 exports.UpdateProduct = async (req, res) => {
     try {
@@ -252,45 +345,50 @@ exports.UpdateProduct = async (req, res) => {
         let product = await Producto.findByPk(productId);
 
         if (!product) {
-            res.status(404).json({
-                message: "No se encontró el producto para actualizar con id = " + productId,
-                producto: "",
-                error: "404"
-            });
-        } else {
-            let updatedObject = {
-                ProductSku: req.body.ProductSku,
-                ProductName: req.body.ProductName,
-                ProductPrice: req.body.ProductPrice,
-                ProductShortName: req.body.ProductShortName,
-                ProductDescription: req.body.ProductDescription,
-                CreatedDate: req.body.CreatedDate || new Date(),
-                DeliveryTimeSpan: req.body.DeliveryTimeSpan,
-                CategoryId: req.body.CategoryId,
-                ProductImageUrl: req.body.ProductImageUrl,
-                UserId: req.body.UserId
-            };
-            let result = await Producto.update(updatedObject, { returning: true, where: { ProductId: productId } });
-
-            if (!result) {
-                res.status(500).json({
-                    message: "Error -> No se puede actualizar el producto con id = " + req.params.id,
-                    error: "No se pudo actualizar",
-                });
-            }
-
-            res.status(200).json({
-                message: "Producto actualizado con éxito con id = " + productId,
-                producto: updatedObject,
+            return res.status(404).json({
+                message: "No se encontró el producto para actualizar",
+                result: false,
+                data: null
             });
         }
+
+        let updatedObject = {
+            productSku: req.body.productSku,
+            productName: req.body.productName,
+            productPrice: req.body.productPrice,
+            productShortName: req.body.productShortName || null,
+            productDescription: req.body.productDescription || null,
+            createdDate: req.body.createdDate || new Date(),
+            deliveryTimeSpan: req.body.deliveryTimeSpan || null,
+            categoryId: req.body.categoryId || null,
+            productImageUrl: req.body.productImageUrl || null,
+            userId: req.body.userId || null
+        };
+
+        let [updated] = await Producto.update(updatedObject, { returning: true, where: { productId: productId } });
+
+        if (!updated) {
+            return res.status(500).json({
+                message: "No se pudo actualizar el producto",
+                result: false,
+                error: "No se pudo actualizar el producto con id = " + productId
+            });
+        }
+
+        res.status(200).json({
+            message: "Producto actualizado con éxito",
+            result: true,
+            data: updatedObject
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede actualizar el producto con id = " + req.params.id,
+            message: "Error al actualizar el producto",
+            result: false,
             error: error.message
         });
     }
 };
+
 
 exports.DeleteProductById = async (req, res) => {
     try {
@@ -298,24 +396,40 @@ exports.DeleteProductById = async (req, res) => {
         let product = await Producto.findByPk(productId);
 
         if (!product) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "No existe un producto con id = " + productId,
-                error: "404",
-            });
-        } else {
-            await product.destroy();
-            res.status(200).json({
-                message: "Producto eliminado con éxito con id = " + productId,
-                producto: product,
+                result: false,
+                data: null
             });
         }
+
+        await product.destroy();
+        res.status(200).json({
+            message: "Producto eliminado con éxito",
+            result: true,
+            data: {
+                productId: product.productId,
+                productSku: product.productSku,
+                productName: product.productName,
+                productPrice: product.productPrice,
+                productShortName: product.productShortName || null,
+                productDescription: product.productDescription || null,
+                createdDate: product.createdDate || null,
+                deliveryTimeSpan: product.deliveryTimeSpan || null,
+                categoryId: product.categoryId || null,
+                productImageUrl: product.productImageUrl || null,
+                userId: product.userId || null
+            }
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede eliminar el producto con id = " + req.params.id,
-            error: error.message,
+            message: "Error al eliminar el producto",
+            result: false,
+            error: error.message
         });
     }
 };
+
 
 
 // Controladores para Rol
