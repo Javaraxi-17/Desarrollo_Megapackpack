@@ -1,22 +1,26 @@
 const db = require('../config/db.config.js');
-const Categoria = db.Categoria;
-const Producto = db.Producto;
-const Rol = db.Rol;
-const Usuario = db.Usuario;
-const Cliente = db.Cliente;
-const Pedido = db.Pedido;
-const DetallePedido = db.DetallePedido;
+const Category = db.Category;
+const Product = db.Product;
+const Option = db.Option;
+const ProductOption = db.ProductOption;
+const ProductCategory = db.ProductCategory;
+const Order = db.Order;
+const OrderDetail = db.OrderDetail;
+const Customer = db.Customer;
 
-// Controladores para Categoria
-exports.createCategoria = (req, res) => {
-    let categoria = {};
+// Controladores para Categories
+exports.createCategory = (req, res) => {
+    let category = {};
+
     try {
-        categoria.nombre = req.body.nombre;
+        category.name = req.body.name;
+        category.description = req.body.description || null;  // Puede ser null
+        category.thumbnail = req.body.thumbnail || null;  // Puede ser null
 
-        Categoria.create(categoria).then(result => {
+        Category.create(category).then(result => {
             res.status(200).json({
-                message: "Categoría creada con éxito con id = " + result.id_categoria,
-                categoria: result,
+                message: "Categoría creada con éxito con id = " + result.id,
+                category: result,
             });
         });
     } catch (error) {
@@ -27,12 +31,12 @@ exports.createCategoria = (req, res) => {
     }
 };
 
-exports.retrieveAllCategorias = (req, res) => {
-    Categoria.findAll()
-        .then(categoriaInfos => {
+exports.GetAllCategories = (req, res) => {
+    Category.findAll()
+        .then(categoryInfos => {
             res.status(200).json({
                 message: "Categorías recuperadas con éxito!",
-                categorias: categoriaInfos
+                categories: categoryInfos
             });
         })
         .catch(error => {
@@ -43,14 +47,20 @@ exports.retrieveAllCategorias = (req, res) => {
         });
 };
 
-exports.getCategoriaById = (req, res) => {
-    let categoriaId = req.params.id;
-    Categoria.findByPk(categoriaId)
-        .then(categoria => {
-            res.status(200).json({
-                message: "Categoría recuperada con éxito con id = " + categoriaId,
-                categoria: categoria
-            });
+exports.getCategoryById = (req, res) => {
+    let categoryId = req.params.id;
+    Category.findByPk(categoryId)
+        .then(category => {
+            if (category) {
+                res.status(200).json({
+                    message: "Categoría recuperada con éxito con id = " + categoryId,
+                    category: category
+                });
+            } else {
+                res.status(404).json({
+                    message: "Categoría no encontrada con id = " + categoryId,
+                });
+            }
         })
         .catch(error => {
             res.status(500).json({
@@ -60,34 +70,36 @@ exports.getCategoriaById = (req, res) => {
         });
 };
 
-exports.updateCategoriaById = async (req, res) => {
+exports.updateCategoryById = async (req, res) => {
     try {
-        let categoriaId = req.params.id;
-        let categoria = await Categoria.findByPk(categoriaId);
+        let categoryId = req.params.id;
+        let category = await Category.findByPk(categoryId);
 
-        if (!categoria) {
+        if (!category) {
             res.status(404).json({
-                message: "No se encontró la categoría para actualizar con id = " + categoriaId,
-                categoria: "",
+                message: "No se encontró la categoría para actualizar con id = " + categoryId,
+                category: "",
                 error: "404"
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre
+                name: req.body.name,
+                description: req.body.description || null,  // Permitir null si no se especifica
+                thumbnail: req.body.thumbnail || null
             };
-            let result = await Categoria.update(updatedObject, { returning: true, where: { id_categoria: categoriaId } });
+            let result = await Category.update(updatedObject, { returning: true, where: { id: categoryId } });
 
-            if (!result) {
+            if (result) {
+                res.status(200).json({
+                    message: "Categoría actualizada con éxito con id = " + categoryId,
+                    category: updatedObject,
+                });
+            } else {
                 res.status(500).json({
                     message: "Error -> No se puede actualizar la categoría con id = " + req.params.id,
                     error: "No se pudo actualizar",
                 });
             }
-
-            res.status(200).json({
-                message: "Categoría actualizada con éxito con id = " + categoriaId,
-                categoria: updatedObject,
-            });
         }
     } catch (error) {
         res.status(500).json({
@@ -97,21 +109,21 @@ exports.updateCategoriaById = async (req, res) => {
     }
 };
 
-exports.deleteCategoriaById = async (req, res) => {
+exports.deleteCategoryById = async (req, res) => {
     try {
-        let categoriaId = req.params.id;
-        let categoria = await Categoria.findByPk(categoriaId);
+        let categoryId = req.params.id;
+        let category = await Category.findByPk(categoryId);
 
-        if (!categoria) {
+        if (!category) {
             res.status(404).json({
-                message: "No existe una categoría con id = " + categoriaId,
+                message: "No existe una categoría con id = " + categoryId,
                 error: "404",
             });
         } else {
-            await categoria.destroy();
+            await category.destroy();
             res.status(200).json({
-                message: "Categoría eliminada con éxito con id = " + categoriaId,
-                categoria: categoria,
+                message: "Categoría eliminada con éxito con id = " + categoryId,
+                category: category,
             });
         }
     } catch (error) {
@@ -122,22 +134,26 @@ exports.deleteCategoriaById = async (req, res) => {
     }
 };
 
-// Controladores para Producto
+// Controladores para Products
 exports.createProduct = (req, res) => {
     let product = {};
 
     try {
-        product.nombre = req.body.nombre;
-        product.descripcion = req.body.descripcion;
-        product.precio = req.body.precio;
-        product.id_categoria = req.body.id_categoria;
+        product.sku = req.body.sku;
+        product.name = req.body.name;
+        product.price = req.body.price;
+        product.weight = req.body.weight;
+        product.descriptions = req.body.descriptions;
+        product.thumbnail = req.body.thumbnail;
+        product.image = req.body.image;
+        product.category = req.body.category;
+        product.create_date = req.body.create_date || new Date();
         product.stock = req.body.stock;
-        product.es_mayorista = req.body.es_mayorista;
 
-        Producto.create(product).then(result => {
+        Product.create(product).then(result => {
             res.status(200).json({
-                message: "Producto creado con éxito con id = " + result.id_producto,
-                producto: result,
+                message: "Producto creado con éxito con id = " + result.id,
+                product: result,
             });
         });
     } catch (error) {
@@ -148,12 +164,12 @@ exports.createProduct = (req, res) => {
     }
 };
 
-exports.retrieveAllProducts = (req, res) => {
-    Producto.findAll()
+exports.GetAllProducts = (req, res) => {
+    Product.findAll()
         .then(productInfos => {
             res.status(200).json({
                 message: "Productos recuperados con éxito!",
-                productos: productInfos
+                products: productInfos
             });
         })
         .catch(error => {
@@ -166,11 +182,11 @@ exports.retrieveAllProducts = (req, res) => {
 
 exports.getProductById = (req, res) => {
     let productId = req.params.id;
-    Producto.findByPk(productId)
+    Product.findByPk(productId)
         .then(product => {
             res.status(200).json({
                 message: "Producto recuperado con éxito con id = " + productId,
-                producto: product
+                product: product
             });
         })
         .catch(error => {
@@ -184,24 +200,28 @@ exports.getProductById = (req, res) => {
 exports.updateProductById = async (req, res) => {
     try {
         let productId = req.params.id;
-        let product = await Producto.findByPk(productId);
+        let product = await Product.findByPk(productId);
 
         if (!product) {
             res.status(404).json({
                 message: "No se encontró el producto para actualizar con id = " + productId,
-                producto: "",
+                product: "",
                 error: "404"
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre,
-                descripcion: req.body.descripcion,
-                precio: req.body.precio,
-                id_categoria: req.body.id_categoria,
-                stock: req.body.stock,
-                es_mayorista: req.body.es_mayorista
+                sku: req.body.sku,
+                name: req.body.name,
+                price: req.body.price,
+                weight: req.body.weight,
+                descriptions: req.body.descriptions,
+                thumbnail: req.body.thumbnail,
+                image: req.body.image,
+                category: req.body.category,
+                create_date: req.body.create_date || new Date(),
+                stock: req.body.stock
             };
-            let result = await Producto.update(updatedObject, { returning: true, where: { id_producto: productId } });
+            let result = await Product.update(updatedObject, { returning: true, where: { id: productId } });
 
             if (!result) {
                 res.status(500).json({
@@ -212,7 +232,7 @@ exports.updateProductById = async (req, res) => {
 
             res.status(200).json({
                 message: "Producto actualizado con éxito con id = " + productId,
-                producto: updatedObject,
+                product: updatedObject,
             });
         }
     } catch (error) {
@@ -226,7 +246,7 @@ exports.updateProductById = async (req, res) => {
 exports.deleteProductById = async (req, res) => {
     try {
         let productId = req.params.id;
-        let product = await Producto.findByPk(productId);
+        let product = await Product.findByPk(productId);
 
         if (!product) {
             res.status(404).json({
@@ -237,7 +257,7 @@ exports.deleteProductById = async (req, res) => {
             await product.destroy();
             res.status(200).json({
                 message: "Producto eliminado con éxito con id = " + productId,
-                producto: product,
+                product: product,
             });
         }
     } catch (error) {
@@ -248,16 +268,23 @@ exports.deleteProductById = async (req, res) => {
     }
 };
 
-// Controladores para Rol
-exports.createRol = (req, res) => {
-    let rol = {};
-    try {
-        rol.nombre = req.body.nombre;
+// Controladores para Customers
+exports.createCustomer = (req, res) => {
+    let customer = {};
 
-        Rol.create(rol).then(result => {
+    try {
+        customer.email = req.body.email;
+        customer.password = req.body.password;
+        customer.full_name = req.body.full_name;
+        customer.billing_address = req.body.billing_address;
+        customer.default_shipping_address = req.body.default_shipping_address;
+        customer.country = req.body.country;
+        customer.phone = req.body.phone;
+
+        Customer.create(customer).then(result => {
             res.status(200).json({
-                message: "Rol creado con éxito con id = " + result.id_rol,
-                rol: result,
+                message: "Cliente creado con éxito con id = " + result.id,
+                customer: result,
             });
         });
     } catch (error) {
@@ -268,254 +295,12 @@ exports.createRol = (req, res) => {
     }
 };
 
-exports.retrieveAllRoles = (req, res) => {
-    Rol.findAll()
-        .then(rolInfos => {
-            res.status(200).json({
-                message: "Roles recuperados con éxito!",
-                roles: rolInfos
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-};
-
-exports.getRolById = (req, res) => {
-    let rolId = req.params.id;
-    Rol.findByPk(rolId)
-        .then(rol => {
-            res.status(200).json({
-                message: "Rol recuperado con éxito con id = " + rolId,
-                rol: rol
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-};
-
-exports.updateRolById = async (req, res) => {
-    try {
-        let rolId = req.params.id;
-        let rol = await Rol.findByPk(rolId);
-
-        if (!rol) {
-            res.status(404).json({
-                message: "No se encontró el rol para actualizar con id = " + rolId,
-                rol: "",
-                error: "404"
-            });
-        } else {
-            let updatedObject = {
-                nombre: req.body.nombre
-            };
-            let result = await Rol.update(updatedObject, { returning: true, where: { id_rol: rolId } });
-
-            if (!result) {
-                res.status(500).json({
-                    message: "Error -> No se puede actualizar el rol con id = " + req.params.id,
-                    error: "No se pudo actualizar",
-                });
-            }
-
-            res.status(200).json({
-                message: "Rol actualizado con éxito con id = " + rolId,
-                rol: updatedObject,
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: "Error -> No se puede actualizar el rol con id = " + req.params.id,
-            error: error.message
-        });
-    }
-};
-
-exports.deleteRolById = async (req, res) => {
-    try {
-        let rolId = req.params.id;
-        let rol = await Rol.findByPk(rolId);
-
-        if (!rol) {
-            res.status(404).json({
-                message: "No existe un rol con id = " + rolId,
-                error: "404",
-            });
-        } else {
-            await rol.destroy();
-            res.status(200).json({
-                message: "Rol eliminado con éxito con id = " + rolId,
-                rol: rol,
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: "Error -> No se puede eliminar el rol con id = " + req.params.id,
-            error: error.message,
-        });
-    }
-};
-
-// Controladores para Usuario
-exports.createUsuario = (req, res) => {
-    let usuario = {};
-
-    try {
-        usuario.nombre_usuario = req.body.nombre_usuario;
-        usuario.email = req.body.email;
-        usuario.contrasena = req.body.contrasena;
-        usuario.id_rol = req.body.id_rol;
-
-        Usuario.create(usuario).then(result => {
-            res.status(200).json({
-                message: "Usuario creado con éxito con id = " + result.id_usuario,
-                usuario: result,
-            });
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Error!",
-            error: error.message
-        });
-    }
-};
-
-exports.retrieveAllUsuarios = (req, res) => {
-    Usuario.findAll()
-        .then(usuarioInfos => {
-            res.status(200).json({
-                message: "Usuarios recuperados con éxito!",
-                usuarios: usuarioInfos
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-};
-
-exports.getUsuarioById = (req, res) => {
-    let usuarioId = req.params.id;
-    Usuario.findByPk(usuarioId)
-        .then(usuario => {
-            res.status(200).json({
-                message: "Usuario recuperado con éxito con id = " + usuarioId,
-                usuario: usuario
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
-        });
-};
-
-exports.updateUsuarioById = async (req, res) => {
-    try {
-        let usuarioId = req.params.id;
-        let usuario = await Usuario.findByPk(usuarioId);
-
-        if (!usuario) {
-            res.status(404).json({
-                message: "No se encontró el usuario para actualizar con id = " + usuarioId,
-                usuario: "",
-                error: "404"
-            });
-        } else {
-            let updatedObject = {
-                nombre_usuario: req.body.nombre_usuario,
-                email: req.body.email,
-                contrasena: req.body.contrasena,
-                id_rol: req.body.id_rol
-            };
-            let result = await Usuario.update(updatedObject, { returning: true, where: { id_usuario: usuarioId } });
-
-            if (!result) {
-                res.status(500).json({
-                    message: "Error -> No se puede actualizar el usuario con id = " + req.params.id,
-                    error: "No se pudo actualizar",
-                });
-            }
-
-            res.status(200).json({
-                message: "Usuario actualizado con éxito con id = " + usuarioId,
-                usuario: updatedObject,
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: "Error -> No se puede actualizar el usuario con id = " + req.params.id,
-            error: error.message
-        });
-    }
-};
-
-exports.deleteUsuarioById = async (req, res) => {
-    try {
-        let usuarioId = req.params.id;
-        let usuario = await Usuario.findByPk(usuarioId);
-
-        if (!usuario) {
-            res.status(404).json({
-                message: "No existe un usuario con id = " + usuarioId,
-                error: "404",
-            });
-        } else {
-            await usuario.destroy();
-            res.status(200).json({
-                message: "Usuario eliminado con éxito con id = " + usuarioId,
-                usuario: usuario,
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: "Error -> No se puede eliminar el usuario con id = " + req.params.id,
-            error: error.message,
-        });
-    }
-};
-
-// Controladores para Cliente
-exports.createCliente = (req, res) => {
-    let cliente = {};
-
-    try {
-        cliente.nombre = req.body.nombre;
-        cliente.telefono = req.body.telefono;
-        cliente.direccion = req.body.direccion;
-        cliente.es_mayorista = req.body.es_mayorista;
-        cliente.id_usuario = req.body.id_usuario;
-
-        Cliente.create(cliente).then(result => {
-            res.status(200).json({
-                message: "Cliente creado con éxito con id = " + result.id_cliente,
-                cliente: result,
-            });
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Error!",
-            error: error.message
-        });
-    }
-};
-
-exports.retrieveAllClientes = (req, res) => {
-    Cliente.findAll()
-        .then(clienteInfos => {
+exports.GetAllCustomers = (req, res) => {
+    Customer.findAll()
+        .then(customerInfos => {
             res.status(200).json({
                 message: "Clientes recuperados con éxito!",
-                clientes: clienteInfos
+                customers: customerInfos
             });
         })
         .catch(error => {
@@ -526,13 +311,13 @@ exports.retrieveAllClientes = (req, res) => {
         });
 };
 
-exports.getClienteById = (req, res) => {
-    let clienteId = req.params.id;
-    Cliente.findByPk(clienteId)
-        .then(cliente => {
+exports.getCustomerById = (req, res) => {
+    let customerId = req.params.id;
+    Customer.findByPk(customerId)
+        .then(customer => {
             res.status(200).json({
-                message: "Cliente recuperado con éxito con id = " + clienteId,
-                cliente: cliente
+                message: "Cliente recuperado con éxito con id = " + customerId,
+                customer: customer
             });
         })
         .catch(error => {
@@ -543,26 +328,28 @@ exports.getClienteById = (req, res) => {
         });
 };
 
-exports.updateClienteById = async (req, res) => {
+exports.updateCustomerById = async (req, res) => {
     try {
-        let clienteId = req.params.id;
-        let cliente = await Cliente.findByPk(clienteId);
+        let customerId = req.params.id;
+        let customer = await Customer.findByPk(customerId);
 
-        if (!cliente) {
+        if (!customer) {
             res.status(404).json({
-                message: "No se encontró el cliente para actualizar con id = " + clienteId,
-                cliente: "",
+                message: "No se encontró el cliente para actualizar con id = " + customerId,
+                customer: "",
                 error: "404"
             });
         } else {
             let updatedObject = {
-                nombre: req.body.nombre,
-                telefono: req.body.telefono,
-                direccion: req.body.direccion,
-                es_mayorista: req.body.es_mayorista,
-                id_usuario: req.body.id_usuario
+                email: req.body.email,
+                password: req.body.password,
+                full_name: req.body.full_name,
+                billing_address: req.body.billing_address,
+                default_shipping_address: req.body.default_shipping_address,
+                country: req.body.country,
+                phone: req.body.phone
             };
-            let result = await Cliente.update(updatedObject, { returning: true, where: { id_cliente: clienteId } });
+            let result = await Customer.update(updatedObject, { returning: true, where: { id: customerId } });
 
             if (!result) {
                 res.status(500).json({
@@ -572,8 +359,8 @@ exports.updateClienteById = async (req, res) => {
             }
 
             res.status(200).json({
-                message: "Cliente actualizado con éxito con id = " + clienteId,
-                cliente: updatedObject,
+                message: "Cliente actualizado con éxito con id = " + customerId,
+                customer: updatedObject,
             });
         }
     } catch (error) {
@@ -584,21 +371,21 @@ exports.updateClienteById = async (req, res) => {
     }
 };
 
-exports.deleteClienteById = async (req, res) => {
+exports.deleteCustomerById = async (req, res) => {
     try {
-        let clienteId = req.params.id;
-        let cliente = await Cliente.findByPk(clienteId);
+        let customerId = req.params.id;
+        let customer = await Customer.findByPk(customerId);
 
-        if (!cliente) {
+        if (!customer) {
             res.status(404).json({
-                message: "No existe un cliente con id = " + clienteId,
+                message: "No existe un cliente con id = " + customerId,
                 error: "404",
             });
         } else {
-            await cliente.destroy();
+            await customer.destroy();
             res.status(200).json({
-                message: "Cliente eliminado con éxito con id = " + clienteId,
-                cliente: cliente,
+                message: "Cliente eliminado con éxito con id = " + customerId,
+                customer: customer,
             });
         }
     } catch (error) {
@@ -609,20 +396,23 @@ exports.deleteClienteById = async (req, res) => {
     }
 };
 
-// Controladores para Pedido
-exports.createPedido = (req, res) => {
-    let pedido = {};
+// Controladores para Orders
+exports.createOrder = (req, res) => {
+    let order = {};
 
     try {
-        pedido.id_cliente = req.body.id_cliente;
-        pedido.fecha_pedido = req.body.fecha_pedido;
-        pedido.total = req.body.total;
-        pedido.id_usuario = req.body.id_usuario;
+        order.customer_id = req.body.customer_id;
+        order.amount = req.body.amount;
+        order.shipping_address = req.body.shipping_address;
+        order.order_address = req.body.order_address;
+        order.order_email = req.body.order_email;
+        order.order_date = req.body.order_date || new Date();
+        order.order_status = req.body.order_status;
 
-        Pedido.create(pedido).then(result => {
+        Order.create(order).then(result => {
             res.status(200).json({
-                message: "Pedido creado con éxito con id = " + result.id_pedido,
-                pedido: result,
+                message: "Pedido creado con éxito con id = " + result.id,
+                order: result,
             });
         });
     } catch (error) {
@@ -633,12 +423,12 @@ exports.createPedido = (req, res) => {
     }
 };
 
-exports.retrieveAllPedidos = (req, res) => {
-    Pedido.findAll()
-        .then(pedidoInfos => {
+exports.GetAllOrders = (req, res) => {
+    Order.findAll()
+        .then(orderInfos => {
             res.status(200).json({
                 message: "Pedidos recuperados con éxito!",
-                pedidos: pedidoInfos
+                orders: orderInfos
             });
         })
         .catch(error => {
@@ -649,13 +439,13 @@ exports.retrieveAllPedidos = (req, res) => {
         });
 };
 
-exports.getPedidoById = (req, res) => {
-    let pedidoId = req.params.id;
-    Pedido.findByPk(pedidoId)
-        .then(pedido => {
+exports.getOrderById = (req, res) => {
+    let orderId = req.params.id;
+    Order.findByPk(orderId)
+        .then(order => {
             res.status(200).json({
-                message: "Pedido recuperado con éxito con id = " + pedidoId,
-                pedido: pedido
+                message: "Pedido recuperado con éxito con id = " + orderId,
+                order: order
             });
         })
         .catch(error => {
@@ -666,25 +456,28 @@ exports.getPedidoById = (req, res) => {
         });
 };
 
-exports.updatePedidoById = async (req, res) => {
+exports.updateOrderById = async (req, res) => {
     try {
-        let pedidoId = req.params.id;
-        let pedido = await Pedido.findByPk(pedidoId);
+        let orderId = req.params.id;
+        let order = await Order.findByPk(orderId);
 
-        if (!pedido) {
+        if (!order) {
             res.status(404).json({
-                message: "No se encontró el pedido para actualizar con id = " + pedidoId,
-                pedido: "",
+                message: "No se encontró el pedido para actualizar con id = " + orderId,
+                order: "",
                 error: "404"
             });
         } else {
             let updatedObject = {
-                id_cliente: req.body.id_cliente,
-                fecha_pedido: req.body.fecha_pedido,
-                total: req.body.total,
-                id_usuario: req.body.id_usuario
+                customer_id: req.body.customer_id,
+                amount: req.body.amount,
+                shipping_address: req.body.shipping_address,
+                order_address: req.body.order_address,
+                order_email: req.body.order_email,
+                order_date: req.body.order_date || new Date(),
+                order_status: req.body.order_status
             };
-            let result = await Pedido.update(updatedObject, { returning: true, where: { id_pedido: pedidoId } });
+            let result = await Order.update(updatedObject, { returning: true, where: { id: orderId } });
 
             if (!result) {
                 res.status(500).json({
@@ -694,8 +487,8 @@ exports.updatePedidoById = async (req, res) => {
             }
 
             res.status(200).json({
-                message: "Pedido actualizado con éxito con id = " + pedidoId,
-                pedido: updatedObject,
+                message: "Pedido actualizado con éxito con id = " + orderId,
+                order: updatedObject,
             });
         }
     } catch (error) {
@@ -706,21 +499,21 @@ exports.updatePedidoById = async (req, res) => {
     }
 };
 
-exports.deletePedidoById = async (req, res) => {
+exports.deleteOrderById = async (req, res) => {
     try {
-        let pedidoId = req.params.id;
-        let pedido = await Pedido.findByPk(pedidoId);
+        let orderId = req.params.id;
+        let order = await Order.findByPk(orderId);
 
-        if (!pedido) {
+        if (!order) {
             res.status(404).json({
-                message: "No existe un pedido con id = " + pedidoId,
+                message: "No existe un pedido con id = " + orderId,
                 error: "404",
             });
         } else {
-            await pedido.destroy();
+            await order.destroy();
             res.status(200).json({
-                message: "Pedido eliminado con éxito con id = " + pedidoId,
-                pedido: pedido,
+                message: "Pedido eliminado con éxito con id = " + orderId,
+                order: order,
             });
         }
     } catch (error) {
@@ -731,21 +524,21 @@ exports.deletePedidoById = async (req, res) => {
     }
 };
 
-// Controladores para DetallePedido
-exports.createDetallePedido = (req, res) => {
-    let detallePedido = {};
+// Controladores para OrderDetails
+exports.createOrderDetail = (req, res) => {
+    let orderDetail = {};
 
     try {
-        detallePedido.id_pedido = req.body.id_pedido;
-        detallePedido.id_producto = req.body.id_producto;
-        detallePedido.cantidad = req.body.cantidad;
-        detallePedido.precio_unitario = req.body.precio_unitario;
-        detallePedido.subtotal = req.body.subtotal;
+        orderDetail.order_id = req.body.order_id;
+        orderDetail.product_id = req.body.product_id;
+        orderDetail.price = req.body.price;
+        orderDetail.sku = req.body.sku;
+        orderDetail.quantity = req.body.quantity;
 
-        DetallePedido.create(detallePedido).then(result => {
+        OrderDetail.create(orderDetail).then(result => {
             res.status(200).json({
-                message: "Detalle de pedido creado con éxito con id = " + result.id_detalle,
-                detallePedido: result,
+                message: "Detalle de pedido creado con éxito con id = " + result.id,
+                orderDetail: result,
             });
         });
     } catch (error) {
@@ -756,12 +549,12 @@ exports.createDetallePedido = (req, res) => {
     }
 };
 
-exports.retrieveAllDetallesPedido = (req, res) => {
-    DetallePedido.findAll()
-        .then(detallePedidoInfos => {
+exports.GetAllOrderDetails = (req, res) => {
+    OrderDetail.findAll()
+        .then(orderDetailInfos => {
             res.status(200).json({
                 message: "Detalles de pedidos recuperados con éxito!",
-                detallesPedido: detallePedidoInfos
+                orderDetails: orderDetailInfos
             });
         })
         .catch(error => {
@@ -772,13 +565,13 @@ exports.retrieveAllDetallesPedido = (req, res) => {
         });
 };
 
-exports.getDetallePedidoById = (req, res) => {
-    let detallePedidoId = req.params.id;
-    DetallePedido.findByPk(detallePedidoId)
-        .then(detallePedido => {
+exports.getOrderDetailById = (req, res) => {
+    let orderDetailId = req.params.id;
+    OrderDetail.findByPk(orderDetailId)
+        .then(orderDetail => {
             res.status(200).json({
-                message: "Detalle de pedido recuperado con éxito con id = " + detallePedidoId,
-                detallePedido: detallePedido
+                message: "Detalle de pedido recuperado con éxito con id = " + orderDetailId,
+                orderDetail: orderDetail
             });
         })
         .catch(error => {
@@ -789,26 +582,26 @@ exports.getDetallePedidoById = (req, res) => {
         });
 };
 
-exports.updateDetallePedidoById = async (req, res) => {
+exports.updateOrderDetailById = async (req, res) => {
     try {
-        let detallePedidoId = req.params.id;
-        let detallePedido = await DetallePedido.findByPk(detallePedidoId);
+        let orderDetailId = req.params.id;
+        let orderDetail = await OrderDetail.findByPk(orderDetailId);
 
-        if (!detallePedido) {
+        if (!orderDetail) {
             res.status(404).json({
-                message: "No se encontró el detalle de pedido para actualizar con id = " + detallePedidoId,
-                detallePedido: "",
+                message: "No se encontró el detalle de pedido para actualizar con id = " + orderDetailId,
+                orderDetail: "",
                 error: "404"
             });
         } else {
             let updatedObject = {
-                id_pedido: req.body.id_pedido,
-                id_producto: req.body.id_producto,
-                cantidad: req.body.cantidad,
-                precio_unitario: req.body.precio_unitario,
-                subtotal: req.body.subtotal
+                order_id: req.body.order_id,
+                product_id: req.body.product_id,
+                price: req.body.price,
+                sku: req.body.sku,
+                quantity: req.body.quantity
             };
-            let result = await DetallePedido.update(updatedObject, { returning: true, where: { id_detalle: detallePedidoId } });
+            let result = await OrderDetail.update(updatedObject, { returning: true, where: { id: orderDetailId } });
 
             if (!result) {
                 res.status(500).json({
@@ -818,8 +611,8 @@ exports.updateDetallePedidoById = async (req, res) => {
             }
 
             res.status(200).json({
-                message: "Detalle de pedido actualizado con éxito con id = " + detallePedidoId,
-                detallePedido: updatedObject,
+                message: "Detalle de pedido actualizado con éxito con id = " + orderDetailId,
+                orderDetail: updatedObject,
             });
         }
     } catch (error) {
@@ -830,26 +623,378 @@ exports.updateDetallePedidoById = async (req, res) => {
     }
 };
 
-exports.deleteDetallePedidoById = async (req, res) => {
+exports.deleteOrderDetailById = async (req, res) => {
     try {
-        let detallePedidoId = req.params.id;
-        let detallePedido = await DetallePedido.findByPk(detallePedidoId);
+        let orderDetailId = req.params.id;
+        let orderDetail = await OrderDetail.findByPk(orderDetailId);
 
-        if (!detallePedido) {
+        if (!orderDetail) {
             res.status(404).json({
-                message: "No existe un detalle de pedido con id = " + detallePedidoId,
+                message: "No existe un detalle de pedido con id = " + orderDetailId,
                 error: "404",
             });
         } else {
-            await detallePedido.destroy();
+            await orderDetail.destroy();
             res.status(200).json({
-                message: "Detalle de pedido eliminado con éxito con id = " + detallePedidoId,
-                detallePedido: detallePedido,
+                message: "Detalle de pedido eliminado con éxito con id = " + orderDetailId,
+                orderDetail: orderDetail,
             });
         }
     } catch (error) {
         res.status(500).json({
             message: "Error -> No se puede eliminar el detalle de pedido con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};
+
+// Controladores para Options
+exports.createOption = (req, res) => {
+    let option = {};
+
+    try {
+        option.option_name = req.body.option_name;
+
+        Option.create(option).then(result => {
+            res.status(200).json({
+                message: "Opción creada con éxito con id = " + result.id,
+                option: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.GetAllOptions = (req, res) => {
+    Option.findAll()
+        .then(optionInfos => {
+            res.status(200).json({
+                message: "Opciones recuperadas con éxito!",
+                options: optionInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getOptionById = (req, res) => {
+    let optionId = req.params.id;
+    Option.findByPk(optionId)
+        .then(option => {
+            res.status(200).json({
+                message: "Opción recuperada con éxito con id = " + optionId,
+                option: option
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updateOptionById = async (req, res) => {
+    try {
+        let optionId = req.params.id;
+        let option = await Option.findByPk(optionId);
+
+        if (!option) {
+            res.status(404).json({
+                message: "No se encontró la opción para actualizar con id = " + optionId,
+                option: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                option_name: req.body.option_name
+            };
+            let result = await Option.update(updatedObject, { returning: true, where: { id: optionId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar la opción con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Opción actualizada con éxito con id = " + optionId,
+                option: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar la opción con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deleteOptionById = async (req, res) => {
+    try {
+        let optionId = req.params.id;
+        let option = await Option.findByPk(optionId);
+
+        if (!option) {
+            res.status(404).json({
+                message: "No existe una opción con id = " + optionId,
+                error: "404",
+            });
+        } else {
+            await option.destroy();
+            res.status(200).json({
+                message: "Opción eliminada con éxito con id = " + optionId,
+                option: option,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar la opción con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};
+
+// Controladores para ProductOptions
+exports.createProductOption = (req, res) => {
+    let productOption = {};
+
+    try {
+        productOption.option_id = req.body.option_id;
+        productOption.product_id = req.body.product_id;
+
+        ProductOption.create(productOption).then(result => {
+            res.status(200).json({
+                message: "Opción de producto creada con éxito con id = " + result.id,
+                productOption: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.GetAllProductOptions = (req, res) => {
+    ProductOption.findAll()
+        .then(productOptionInfos => {
+            res.status(200).json({
+                message: "Opciones de productos recuperadas con éxito!",
+                productOptions: productOptionInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getProductOptionById = (req, res) => {
+    let productOptionId = req.params.id;
+    ProductOption.findByPk(productOptionId)
+        .then(productOption => {
+            res.status(200).json({
+                message: "Opción de producto recuperada con éxito con id = " + productOptionId,
+                productOption: productOption
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updateProductOptionById = async (req, res) => {
+    try {
+        let productOptionId = req.params.id;
+        let productOption = await ProductOption.findByPk(productOptionId);
+
+        if (!productOption) {
+            res.status(404).json({
+                message: "No se encontró la opción de producto para actualizar con id = " + productOptionId,
+                productOption: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                option_id: req.body.option_id,
+                product_id: req.body.product_id
+            };
+            let result = await ProductOption.update(updatedObject, { returning: true, where: { id: productOptionId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar la opción de producto con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Opción de producto actualizada con éxito con id = " + productOptionId,
+                productOption: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar la opción de producto con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deleteProductOptionById = async (req, res) => {
+    try {
+        let productOptionId = req.params.id;
+        let productOption = await ProductOption.findByPk(productOptionId);
+
+        if (!productOption) {
+            res.status(404).json({
+                message: "No existe una opción de producto con id = " + productOptionId,
+                error: "404",
+            });
+        } else {
+            await productOption.destroy();
+            res.status(200).json({
+                message: "Opción de producto eliminada con éxito con id = " + productOptionId,
+                productOption: productOption,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar la opción de producto con id = " + req.params.id,
+            error: error.message,
+        });
+    }
+};
+
+// Controladores para ProductCategories
+exports.createProductCategory = (req, res) => {
+    let productCategory = {};
+
+    try {
+        productCategory.product_id = req.body.product_id;
+        productCategory.category_id = req.body.category_id;
+
+        ProductCategory.create(productCategory).then(result => {
+            res.status(200).json({
+                message: "Categoría de producto creada con éxito con id = " + result.id,
+                productCategory: result,
+            });
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
+
+exports.GetAllProductCategories = (req, res) => {
+    ProductCategory.findAll()
+        .then(productCategoryInfos => {
+            res.status(200).json({
+                message: "Categorías de productos recuperadas con éxito!",
+                productCategories: productCategoryInfos
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.getProductCategoryById = (req, res) => {
+    let productCategoryId = req.params.id;
+    ProductCategory.findByPk(productCategoryId)
+        .then(productCategory => {
+            res.status(200).json({
+                message: "Categoría de producto recuperada con éxito con id = " + productCategoryId,
+                productCategory: productCategory
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Error!",
+                error: error
+            });
+        });
+};
+
+exports.updateProductCategoryById = async (req, res) => {
+    try {
+        let productCategoryId = req.params.id;
+        let productCategory = await ProductCategory.findByPk(productCategoryId);
+
+        if (!productCategory) {
+            res.status(404).json({
+                message: "No se encontró la categoría de producto para actualizar con id = " + productCategoryId,
+                productCategory: "",
+                error: "404"
+            });
+        } else {
+            let updatedObject = {
+                product_id: req.body.product_id,
+                category_id: req.body.category_id
+            };
+            let result = await ProductCategory.update(updatedObject, { returning: true, where: { id: productCategoryId } });
+
+            if (!result) {
+                res.status(500).json({
+                    message: "Error -> No se puede actualizar la categoría de producto con id = " + req.params.id,
+                    error: "No se pudo actualizar",
+                });
+            }
+
+            res.status(200).json({
+                message: "Categoría de producto actualizada con éxito con id = " + productCategoryId,
+                productCategory: updatedObject,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede actualizar la categoría de producto con id = " + req.params.id,
+            error: error.message
+        });
+    }
+};
+
+exports.deleteProductCategoryById = async (req, res) => {
+    try {
+        let productCategoryId = req.params.id;
+        let productCategory = await ProductCategory.findByPk(productCategoryId);
+
+        if (!productCategory) {
+            res.status(404).json({
+                message: "No existe una categoría de producto con id = " + productCategoryId,
+                error: "404",
+            });
+        } else {
+            await productCategory.destroy();
+            res.status(200).json({
+                message: "Categoría de producto eliminada con éxito con id = " + productCategoryId,
+                productCategory: productCategory,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error -> No se puede eliminar la categoría de producto con id = " + req.params.id,
             error: error.message,
         });
     }

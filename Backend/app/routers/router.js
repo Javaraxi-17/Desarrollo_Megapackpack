@@ -6,56 +6,53 @@ const controller = require('../controllers/controller.js');
 // Agregar console.log para depuración
 console.log(controller);
 
-// Rutas para Categoria
-router.post('/api/categorias/create', controller.createCategoria);
-router.get('/api/categorias/all', controller.retrieveAllCategorias);
-router.get('/api/categorias/onebyid/:id', controller.getCategoriaById);
-router.put('/api/categorias/update/:id', controller.updateCategoriaById);
-router.delete('/api/categorias/delete/:id', controller.deleteCategoriaById);
+// Rutas para Categories (Categorías)
+router.post('/api/categories/create', controller.createCategory);
+router.get('/api/categories/all', controller.GetAllCategories);
+router.get('/api/categories/onebyid/:id', controller.getCategoryById);
+router.put('/api/categories/update/:id', controller.updateCategoryById);
+router.delete('/api/categories/delete/:id', controller.deleteCategoryById);
 
-// Rutas para Producto
+// Rutas para Products (Productos)
 router.post('/api/products/create', controller.createProduct);
-router.get('/api/products/all', controller.retrieveAllProducts);
+router.get('/api/products/all', controller.GetAllProducts);
 router.get('/api/products/onebyid/:id', controller.getProductById);
-// router.get('/api/products/filterbyprice', controller.filterProductsByPrice);
-// router.get('/api/products/pagination', controller.paginationProducts);
-// router.get('/api/products/pagefiltersort', controller.pagingFilteringSortingProducts);
 router.put('/api/products/update/:id', controller.updateProductById);
 router.delete('/api/products/delete/:id', controller.deleteProductById);
 
-// Rutas para Rol
-router.post('/api/roles/create', controller.createRol);
-router.get('/api/roles/all', controller.retrieveAllRoles);
-router.get('/api/roles/onebyid/:id', controller.getRolById);
-router.put('/api/roles/update/:id', controller.updateRolById);
-router.delete('/api/roles/delete/:id', controller.deleteRolById);
+// Rutas para Product Options (Opciones de Producto)
+router.post('/api/product-options/create', controller.createProductOption);
+router.get('/api/product-options/all', controller.GetAllProductOptions);  // Cambié a 'GetAllProductOptions'
+router.get('/api/product-options/onebyid/:id', controller.getProductOptionById);
+router.put('/api/product-options/update/:id', controller.updateProductOptionById);
+router.delete('/api/product-options/delete/:id', controller.deleteProductOptionById);
 
-// Rutas para Usuario
-router.post('/api/usuarios/create', controller.createUsuario);
-router.get('/api/usuarios/all', controller.retrieveAllUsuarios);
-router.get('/api/usuarios/onebyid/:id', controller.getUsuarioById);
-router.put('/api/usuarios/update/:id', controller.updateUsuarioById);
-router.delete('/api/usuarios/delete/:id', controller.deleteUsuarioById);
+// Rutas para Options (Opciones)
+router.post('/api/options/create', controller.createOption);
+router.get('/api/options/all', controller.GetAllOptions);  // Cambié a 'GetAllOptions'
+router.get('/api/options/onebyid/:id', controller.getOptionById);
+router.put('/api/options/update/:id', controller.updateOptionById);
+router.delete('/api/options/delete/:id', controller.deleteOptionById);
 
-// Rutas para Cliente
-router.post('/api/clientes/create', controller.createCliente);
-router.get('/api/clientes/all', controller.retrieveAllClientes);
-router.get('/api/clientes/onebyid/:id', controller.getClienteById);
-router.put('/api/clientes/update/:id', controller.updateClienteById);
-router.delete('/api/clientes/delete/:id', controller.deleteClienteById);
+// Rutas para Orders (Pedidos)
+router.post('/api/orders/create', controller.createOrder);
+router.get('/api/orders/all', controller.GetAllOrders);  // Cambié a 'GetAllOrders'
+router.get('/api/orders/onebyid/:id', controller.getOrderById);
+router.put('/api/orders/update/:id', controller.updateOrderById);
+router.delete('/api/orders/delete/:id', controller.deleteOrderById);
 
-// Rutas para Pedido
-router.post('/api/pedidos/create', controller.createPedido);
-router.get('/api/pedidos/all', controller.retrieveAllPedidos);
-router.get('/api/pedidos/onebyid/:id', controller.getPedidoById);
-router.put('/api/pedidos/update/:id', controller.updatePedidoById);
-router.delete('/api/pedidos/delete/:id', controller.deletePedidoById);
+// Rutas para Order Details (Detalles del Pedido)
+router.post('/api/order-details/create', controller.createOrderDetail);
+router.get('/api/order-details/all', controller.GetAllOrderDetails);  // Cambié a 'GetAllOrderDetails'
+router.get('/api/order-details/onebyid/:id', controller.getOrderDetailById);
+router.put('/api/order-details/update/:id', controller.updateOrderDetailById);
+router.delete('/api/order-details/delete/:id', controller.deleteOrderDetailById);
 
-// Rutas para DetallePedido
-router.post('/api/detalles-pedido/create', controller.createDetallePedido);
-router.get('/api/detalles-pedido/all', controller.retrieveAllDetallesPedido);
-router.get('/api/detalles-pedido/onebyid/:id', controller.getDetallePedidoById);
-router.put('/api/detalles-pedido/update/:id', controller.updateDetallePedidoById);
-router.delete('/api/detalles-pedido/delete/:id', controller.deleteDetallePedidoById);
+// Rutas para Customers (Clientes)
+router.post('/api/customers/create', controller.createCustomer);
+router.get('/api/customers/all', controller.GetAllCustomers);  // Cambié a 'GetAllCustomers'
+router.get('/api/customers/onebyid/:id', controller.getCustomerById);
+router.put('/api/customers/update/:id', controller.updateCustomerById);
+router.delete('/api/customers/delete/:id', controller.deleteCustomerById);
 
 module.exports = router;

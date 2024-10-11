@@ -23,35 +23,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenido Estudiantes de UMG" });
 });
 
-// Sincronización de tablas en el orden correcto
-db.Categoria.sync()  // Sincronizar primero la tabla de Categorías
+// Sincronización de todas las tablas sin alteración (force: false asegura que las tablas existentes no se modifiquen)
+db.sequelize.sync({ force: false })  // Sincroniza todos los modelos sin eliminar ni alterar tablas existentes
   .then(() => {
-    return db.Rol.sync();  // Sincronizar la tabla de Roles
-  })
-  .then(() => {
-    return db.Usuario.sync();  // Sincronizar la tabla de Usuarios
-  })
-  .then(() => {
-    return db.Cliente.sync();  // Sincronizar la tabla de Clientes
-  })
-  .then(() => {
-    return db.Pedido.sync();  // Sincronizar la tabla de Pedidos
-  })
-  .then(() => {
-    return db.Producto.sync();  // Sincronizar la tabla de Productos
-  })
-  .then(() => {
-    return db.DetallePedido.sync();  // Sincronizar la tabla de DetallePedido
-  })
-  .then(() => {
-    console.log('Tablas sincronizadas correctamente');
-    
+    console.log('Tablas sincronizadas correctamente, sin alteración de datos.');
+
     // Crear un Servidor
     const PORT = process.env.PORT || 3001;
     const server = app.listen(PORT, function () {
       let host = server.address().address;
       let port = server.address().port;
-      console.log("App listening at http://%s:%s", host, port);
+      console.log("App escuchando en http://%s:%s", host, port);
     });
   })
   .catch(error => {
