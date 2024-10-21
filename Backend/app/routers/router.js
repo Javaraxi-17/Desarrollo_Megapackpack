@@ -6,33 +6,12 @@ const controller = require('../controllers/controller.js');
 // Agregar console.log para depuración
 console.log(controller);
 
-// Rutas para Categories (Categorías)
-router.post('/api/categories/create', controller.createCategory);
-router.get('/api/categories/all', controller.GetAllCategories);
-router.get('/api/categories/onebyid/:id', controller.getCategoryById);
-router.put('/api/categories/update/:id', controller.updateCategoryById);
-router.delete('/api/categories/delete/:id', controller.deleteCategoryById);
-
 // Rutas para Products (Productos)
 router.post('/api/products/create', controller.createProduct);
 router.get('/api/products/all', controller.GetAllProducts);
 router.get('/api/products/onebyid/:id', controller.getProductById);
 router.put('/api/products/update/:id', controller.updateProductById);
 router.delete('/api/products/delete/:id', controller.deleteProductById);
-
-// Rutas para Product Options (Opciones de Producto)
-router.post('/api/product-options/create', controller.createProductOption);
-router.get('/api/product-options/all', controller.GetAllProductOptions);  // Cambié a 'GetAllProductOptions'
-router.get('/api/product-options/onebyid/:id', controller.getProductOptionById);
-router.put('/api/product-options/update/:id', controller.updateProductOptionById);
-router.delete('/api/product-options/delete/:id', controller.deleteProductOptionById);
-
-// Rutas para Options (Opciones)
-router.post('/api/options/create', controller.createOption);
-router.get('/api/options/all', controller.GetAllOptions);  // Cambié a 'GetAllOptions'
-router.get('/api/options/onebyid/:id', controller.getOptionById);
-router.put('/api/options/update/:id', controller.updateOptionById);
-router.delete('/api/options/delete/:id', controller.deleteOptionById);
 
 // Rutas para Orders (Pedidos)
 router.post('/api/orders/create', controller.createOrder);
@@ -41,12 +20,12 @@ router.get('/api/orders/onebyid/:id', controller.getOrderById);
 router.put('/api/orders/update/:id', controller.updateOrderById);
 router.delete('/api/orders/delete/:id', controller.deleteOrderById);
 
-// Rutas para Order Details (Detalles del Pedido)
-router.post('/api/order-details/create', controller.createOrderDetail);
-router.get('/api/order-details/all', controller.GetAllOrderDetails);  // Cambié a 'GetAllOrderDetails'
-router.get('/api/order-details/onebyid/:id', controller.getOrderDetailById);
-router.put('/api/order-details/update/:id', controller.updateOrderDetailById);
-router.delete('/api/order-details/delete/:id', controller.deleteOrderDetailById);
+// Rutas para Order Items (Detalles del Pedido)
+router.post('/api/order-items/create', controller.createOrderItem);
+router.get('/api/order-items/all', controller.GetAllOrderItems);  // Cambié a 'GetAllOrderItems'
+router.get('/api/order-items/onebyid/:id', controller.getOrderItemById);
+router.put('/api/order-items/update/:id', controller.updateOrderItemById);
+router.delete('/api/order-items/delete/:id', controller.deleteOrderItemById);
 
 // Rutas para Customers (Clientes)
 router.post('/api/customers/create', controller.createCustomer);
@@ -54,5 +33,33 @@ router.get('/api/customers/all', controller.GetAllCustomers);  // Cambié a 'Get
 router.get('/api/customers/onebyid/:id', controller.getCustomerById);
 router.put('/api/customers/update/:id', controller.updateCustomerById);
 router.delete('/api/customers/delete/:id', controller.deleteCustomerById);
+
+// Rutas para Clothing Lookup
+router.post('/api/clothing/create', controller.createClothing);
+router.get('/api/clothing/all', controller.GetAllClothing);
+router.get('/api/clothing/onebyid/:id', controller.getClothingById);
+router.put('/api/clothing/update/:id', controller.updateClothingById);
+router.delete('/api/clothing/delete/:id', controller.deleteClothingById);
+
+// Rutas para Color Lookup
+router.post('/api/color/create', controller.createColor);
+router.get('/api/color/all', controller.GetAllColors);
+router.get('/api/color/onebyid/:id', controller.getColorById);
+router.put('/api/color/update/:id', controller.updateColorById);
+router.delete('/api/color/delete/:id', controller.deleteColorById);
+
+// Rutas para Department Lookup
+router.post('/api/department/create', controller.createDepartment);
+router.get('/api/department/all', controller.GetAllDepartments);
+router.get('/api/department/onebyid/:id', controller.getDepartmentById);
+router.put('/api/department/update/:id', controller.updateDepartmentById);
+router.delete('/api/department/delete/:id', controller.deleteDepartmentById);
+
+// Rutas para Stores
+router.post('/api/stores/create', controller.createStore);
+router.get('/api/stores/all', controller.GetAllStores);
+router.get('/api/stores/onebyid/:id', controller.getStoreById);
+router.put('/api/stores/update/:id', controller.updateStoreById);
+router.delete('/api/stores/delete/:id', controller.deleteStoreById);
 
 module.exports = router;

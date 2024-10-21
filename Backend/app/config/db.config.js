@@ -23,45 +23,37 @@ db.sequelize = sequelize;
 
 // Importar modelos
 db.Product = require('../models/products.model.js')(sequelize, Sequelize);
-db.Option = require('../models/options.model.js')(sequelize, Sequelize);
-db.ProductOption = require('../models/product_options.model.js')(sequelize, Sequelize);
-db.Category = require('../models/categories.model.js')(sequelize, Sequelize);
-db.ProductCategory = require('../models/product_categories.model.js')(sequelize, Sequelize);
 db.Customer = require('../models/customers.model.js')(sequelize, Sequelize);
 db.Order = require('../models/orders.model.js')(sequelize, Sequelize);
-db.OrderDetail = require('../models/order_details.model.js')(sequelize, Sequelize);
+db.OrderItem = require('../models/order_items.model.js')(sequelize, Sequelize);
 
+// Nuevos Modelos
+db.ClothingLookup = require('../models/clothing_lookup.model.js')(sequelize, Sequelize);
+db.ColorLookup = require('../models/color_lookup.model.js')(sequelize, Sequelize);
+db.DepartmentLookup = require('../models/department_lookup.model.js')(sequelize, Sequelize);
+db.Store = require('../models/stores.model.js')(sequelize, Sequelize);
 
 // Establecer relaciones
 
-// Un producto puede tener muchas opciones
-db.Product.hasMany(db.ProductOption, { foreignKey: 'product_id' });
-db.ProductOption.belongsTo(db.Product, { foreignKey: 'product_id' });
+// Un pedido puede tener muchas líneas de orden
+db.Order.hasMany(db.OrderItem, { foreignKey: 'order_id' });
+db.OrderItem.belongsTo(db.Order, { foreignKey: 'order_id' });
 
-// Una opción puede aplicarse a muchas combinaciones de productos
-db.Option.hasMany(db.ProductOption, { foreignKey: 'option_id' });
-db.ProductOption.belongsTo(db.Option, { foreignKey: 'option_id' });
+// Un producto puede aparecer en muchas líneas de orden
+db.Product.hasMany(db.OrderItem, { foreignKey: 'product_id' });
+db.OrderItem.belongsTo(db.Product, { foreignKey: 'product_id' });
 
-// Un producto puede pertenecer a muchas categorías
-db.Product.belongsToMany(db.Category, {
-  through: db.ProductCategory,
-  foreignKey: 'product_id',
-});
-db.Category.belongsToMany(db.Product, {
-  through: db.ProductCategory,
-  foreignKey: 'category_id',
-});
+// Relación de PRODUCTOS con COLOR, DEPARTAMENTO y ROPA
+db.Product.belongsTo(db.ColorLookup, { foreignKey: 'color_id' });
+db.Product.belongsTo(db.DepartmentLookup, { foreignKey: 'department_id' });
+db.Product.belongsTo(db.ClothingLookup, { foreignKey: 'clothing_id' });
 
-// Un pedido puede tener muchos detalles de pedido
-db.Order.hasMany(db.OrderDetail, { foreignKey: 'order_id' });
-db.OrderDetail.belongsTo(db.Order, { foreignKey: 'order_id' });
+// Relación de ORDENES con TIENDAS
+db.Order.belongsTo(db.Store, { foreignKey: 'store_id' });
+db.Store.hasMany(db.Order, { foreignKey: 'store_id' });
 
 // Un cliente puede tener muchos pedidos
 db.Customer.hasMany(db.Order, { foreignKey: 'customer_id' });
 db.Order.belongsTo(db.Customer, { foreignKey: 'customer_id' });
-
-// Un producto puede tener muchos detalles de pedido
-db.Product.hasMany(db.OrderDetail, { foreignKey: 'product_id' });
-db.OrderDetail.belongsTo(db.Product, { foreignKey: 'product_id' });
 
 module.exports = db;
