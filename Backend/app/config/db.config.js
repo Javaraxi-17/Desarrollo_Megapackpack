@@ -1,10 +1,15 @@
 const Sequelize = require('sequelize');
 const env = require('./env.js');
 
-const sequelize = new Sequelize(env.database, env.username, env.password, {
-  host: env.host,
-  dialect: env.dialect,
-  port: 1522,
+// Configuración de Sequelize para Oracle usando el connectionString
+
+ console.log(env.connectionString);
+ console.log(env.walletLocation);
+const sequelize = new Sequelize(env.db_name, env.username, env.password, {
+  dialect: 'oracle',  // Dialecto para Oracle
+  dialectOptions: {
+    connectString: env.connectionString,  // Pasa el connectionString aquí
+  },
   pool: {
     max: env.pool.max,
     min: env.pool.min,
@@ -12,7 +17,7 @@ const sequelize = new Sequelize(env.database, env.username, env.password, {
     idle: env.pool.idle
   },
   define: {
-    schema: 'MEGAPACK'  // Define el esquema por defecto
+    schema: 'ADMIN'  // Esquema por defecto en Oracle
   }
 });
 

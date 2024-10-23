@@ -50,7 +50,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       {
         tableName: "STORES",
-        schema: "MEGAPACK", // Especifica el esquema correcto
+        schema: "ADMIN", // Especifica el esquema correcto
         timestamps: false,
       }
     );

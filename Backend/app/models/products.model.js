@@ -57,7 +57,7 @@ module.exports = (sequelize, Sequelize) => {
       }
   }, {
       tableName: 'products',
-      schema: 'MEGAPACK',
+      schema: 'ADMIN',
       timestamps: false
   });
 

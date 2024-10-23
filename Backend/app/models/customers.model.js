@@ -24,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
       }
   }, {
       tableName: 'customers',  // Nombre exacto de la tabla
-      schema: 'MEGAPACK',      // Especificar el esquema
+      schema: 'ADMIN',      // Especificar el esquema
       timestamps: false        // Deshabilitar las marcas de tiempo
   });
 

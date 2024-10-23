@@ -38,7 +38,7 @@ module.exports = (sequelize, Sequelize) => {
       }
     }, {
       tableName: 'order_items',
-      schema: 'MEGAPACK',
+      schema: 'ADMIN',
       timestamps: false
     });
   

@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       }
     }, {
       tableName: 'DEPARTMENT_LOOKUP',  // Nombre exacto de la tabla
-      schema: 'MEGAPACK',
+      schema: 'ADMIN',
       timestamps: false
     });
   
