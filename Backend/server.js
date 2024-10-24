@@ -6,7 +6,7 @@ const db = require('./app/config/db.config.js');
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'http://localhost:4200',
+  origin: '*',  // Permitir solicitudes desde cualquier dominio
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
@@ -41,12 +41,12 @@ async function syncTables() {
     console.log('Tabla Customers sincronizada.');
 
     // Sincronizar la tabla Products después de las tablas lookup
-    await db.Product.sync({ alter: true });
-    console.log('Tabla Products sincronizada.');
+    await db.Product.sync({ alter: false });
+    console.log('Tabla Products sincronizada (sin alteración de columnas).');
 
-    // Sincronizar la tabla Stores antes de Orders
-    await db.Store.sync({ alter: true });
-    console.log('Tabla Stores sincronizada.');
+    // Sincronizar la tabla Stores sin alterar las columnas existentes para evitar el error
+    await db.Store.sync({ alter: false });
+    console.log('Tabla Stores sincronizada (sin alteración de columnas).');
 
     // Sincronizar Orders y OrderItems después de Stores y Customers
     await db.Order.sync({ alter: true });

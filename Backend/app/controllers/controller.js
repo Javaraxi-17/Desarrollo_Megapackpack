@@ -14,7 +14,7 @@ exports.createProduct = (req, res) => {
 
     try {
         product.sku = req.body.sku;
-        product.name = req.body.name;
+        product.product_name = req.body.product_name;  // CAMBIO AQUÍ
         product.unit_price = req.body.unit_price;
         product.product_details = req.body.product_details;
         product.product_image = req.body.product_image;
@@ -87,7 +87,7 @@ exports.updateProductById = async (req, res) => {
         } else {
             let updatedObject = {
                 sku: req.body.sku,
-                name: req.body.name,
+                product_name: req.body.product_name,  // CAMBIO AQUÍ
                 unit_price: req.body.unit_price,
                 product_details: req.body.product_details,
                 product_image: req.body.product_image,
@@ -403,13 +403,10 @@ exports.createCustomer = (req, res) => {
     let customer = {};
 
     try {
-        customer.email = req.body.email;
-        customer.password = req.body.password;
-        customer.full_name = req.body.full_name;
-        customer.billing_address = req.body.billing_address;
-        customer.default_shipping_address = req.body.default_shipping_address;
-        customer.country = req.body.country;
-        customer.phone = req.body.phone;
+        customer.customer_email = req.body.customer_email;  // CAMBIO AQUÍ
+        customer.customer_name = req.body.customer_name;  // CAMBIO AQUÍ
+        customer.customer_phone = req.body.customer_phone;
+        customer.customer_address = req.body.customer_address;
 
         Customer.create(customer).then(result => {
             res.status(200).json({
@@ -471,13 +468,10 @@ exports.updateCustomerById = async (req, res) => {
             });
         } else {
             let updatedObject = {
-                email: req.body.email,
-                password: req.body.password,
-                full_name: req.body.full_name,
-                billing_address: req.body.billing_address,
-                default_shipping_address: req.body.default_shipping_address,
-                country: req.body.country,
-                phone: req.body.phone
+                customer_email: req.body.customer_email,  // CAMBIO AQUÍ
+                customer_name: req.body.customer_name,  // CAMBIO AQUÍ
+                customer_phone: req.body.customer_phone,
+                customer_address: req.body.customer_address
             };
             let result = await Customer.update(updatedObject, { returning: true, where: { id: customerId } });
 
