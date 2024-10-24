@@ -6,64 +6,64 @@ password: '1234',  // Tu contraseña de Oracle
 # RUTAS
 Rutas para Color Lookup
 
-POST: http://localhost:3001/api/color/create
-GET: http://localhost:3001/api/color/all
-GET: http://localhost:3001/api/color/onebyid/#
-PUT: http://localhost:3001/api/color/update/#
-DELETE:  http://localhost:3001/api/color/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/color/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/color/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/color/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/color/update/#
+DELETE:  https://megapack-api-932770499416.us-central1.run.app/api/color/delete/#
 
 Rutas para Department Lookup
 
-POST: http://localhost:3001/api/department/create
-GET: http://localhost:3001/api/department/all
-GET: http://localhost:3001/api/department/onebyid/#
-PUT: http://localhost:3001/api/department/update/#
-DELETE: http://localhost:3001/api/department/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/department/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/department/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/department/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/department/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/department/delete/#
 
 Rutas para Clothing Lookup
 
-POST: http://localhost:3001/api/clothing/create
-GET: http://localhost:3001/api/clothing/all
-GET: http://localhost:3001/api/clothing/onebyid/:#
-PUT: http://localhost:3001/api/clothing/update/:#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/clothing/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/clothing/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/clothing/onebyid/:#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/clothing/update/:#
 DELETE:http://localhost:3001/api/clothing/delete/:#
 
 Rutas para Products (Productos)
 
-POST: http://localhost:3001/api/products/create
-GET: http://localhost:3001/api/products/all
-GET: http://localhost:3001/api/products/onebyid/#
-PUT: http://localhost:3001/api/products/update/#
-DELETE: http://localhost:3001/api/products/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/products/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/products/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/products/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/products/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/products/delete/#
 
 Rutas para Stores
 
-POST: http://localhost:3001/api/stores/create
-GET: http://localhost:3001/api/stores/all
-GET: http://localhost:3001/api/stores/onebyid/#
-PUT: http://localhost:3001/api/stores/update/#
-DELETE: http://localhost:3001/api/stores/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/stores/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/stores/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/stores/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/stores/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/stores/delete/#
 
 Rutas para Customers (Clientes)
 
-POST: http://localhost:3001/api/customers/create
-GET: http://localhost:3001/api/customers/all
-GET: http://localhost:3001/api/customers/onebyid/#
-PUT: http://localhost:3001/api/customers/update/#
-DELETE: http://localhost:3001/api/customers/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/customers/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/customers/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/customers/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/customers/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/customers/delete/#
 
 Rutas para Orders (Pedidos)
 
-POST: http://localhost:3001/api/orders/create
-GET: http://localhost:3001/api/orders/all
-GET: http://localhost:3001/api/orders/onebyid/#
-PUT: http://localhost:3001/api/orders/update/#
-DELETE: http://localhost:3001/api/orders/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/orders/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/orders/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/orders/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/orders/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/orders/delete/#
 
 Rutas para Order Items (Detalles del Pedido)
 
-POST: http://localhost:3001/api/order-items/create
-GET: http://localhost:3001/api/order-items/all
-GET: http://localhost:3001/api/order-items/onebyid/#
-PUT: http://localhost:3001/api/order-items/update/#
-DELETE: http://localhost:3001/api/order-items/delete/#
+POST: https://megapack-api-932770499416.us-central1.run.app/api/order-items/create
+GET: https://megapack-api-932770499416.us-central1.run.app/api/order-items/all
+GET: https://megapack-api-932770499416.us-central1.run.app/api/order-items/onebyid/#
+PUT: https://megapack-api-932770499416.us-central1.run.app/api/order-items/update/#
+DELETE: https://megapack-api-932770499416.us-central1.run.app/api/order-items/delete/#
