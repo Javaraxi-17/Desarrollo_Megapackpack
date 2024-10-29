@@ -23,39 +23,42 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenido Estudiantes de UMG" });
 });
 
+// Variable para activar o desactivar alteración de tablas
+const ALTER_SYNC = false;  // Cambiar a `false` para evitar alteraciones innecesarias
+
 // Sincronización de las tablas en el orden correcto
 async function syncTables() {
   try {
-    // Sincronizar tablas lookup primero, ya que son referenciadas por otras tablas
-    await db.ClothingLookup.sync({ alter: true });
-    console.log('Tabla ClothingLookup sincronizada.');
+    // Sincronización de tablas lookup sin alteración
+    await db.ClothingLookup.sync({ alter: false });
+    console.log('Tabla ClothingLookup sincronizada sin alteración.');
 
-    await db.ColorLookup.sync({ alter: true });
-    console.log('Tabla ColorLookup sincronizada.');
+    await db.ColorLookup.sync({ alter: false });
+    console.log('Tabla ColorLookup sincronizada sin alteración.');
 
-    await db.DepartmentLookup.sync({ alter: true });
-    console.log('Tabla DepartmentLookup sincronizada.');
+    await db.DepartmentLookup.sync({ alter: false });
+    console.log('Tabla DepartmentLookup sincronizada sin alteración.');
 
-    // Sincronizar Customers antes de Orders
-    await db.Customer.sync({ alter: true });
-    console.log('Tabla Customers sincronizada.');
+    // Sincronizar Customers sin alteración de columnas para evitar errores de restricción
+    await db.Customer.sync({ alter: false });
+    console.log('Tabla Customers sincronizada sin alteración de columnas.');
 
-    // Sincronizar la tabla Products después de las tablas lookup
+    // Sincronizar Products sin alteración para evitar errores
     await db.Product.sync({ alter: false });
-    console.log('Tabla Products sincronizada (sin alteración de columnas).');
+    console.log('Tabla Products sincronizada sin alteración de columnas.');
 
-    // Sincronizar la tabla Stores sin alterar las columnas existentes para evitar el error
+    // Sincronizar Stores sin alteración para evitar errores de restricción
     await db.Store.sync({ alter: false });
-    console.log('Tabla Stores sincronizada (sin alteración de columnas).');
+    console.log('Tabla Stores sincronizada sin alteración de columnas.');
 
-    // Sincronizar Orders y OrderItems después de Stores y Customers
-    await db.Order.sync({ alter: true });
-    console.log('Tabla Orders sincronizada.');
+    // Sincronizar Orders y OrderItems sin alteración para evitar problemas
+    await db.Order.sync({ alter: false });
+    console.log('Tabla Orders sincronizada sin alteración de columnas.');
 
-    await db.OrderItem.sync({ alter: true });
-    console.log('Tabla OrderItems sincronizada.');
+    await db.OrderItem.sync({ alter: false });
+    console.log('Tabla OrderItems sincronizada sin alteración de columnas.');
 
-    console.log('Todas las tablas se han sincronizado correctamente.');
+    console.log('Todas las tablas se han sincronizado correctamente sin alteraciones.');
 
     // Iniciar servidor una vez que todas las tablas estén sincronizadas
     const PORT = process.env.PORT || 3001;

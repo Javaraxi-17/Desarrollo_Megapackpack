@@ -1,17 +1,15 @@
-require('dotenv').config();
-
 const env = {
-  db_name: process.env.DB_NAME || 'name',
-  username: process.env.DB_USERNAME || 'user',  // Variable de entorno para el nombre de usuario
-  password: process.env.DB_PASSWORD || 'pass',  // Variable de entorno para la contraseña
-  connectionString: process.env.DB_CONNECTION_STRING || ' ',  // Variable de en torno para el connection string
-  walletLocation: process.env.DB_WALLET_LOCATION || 'Wallet_test',  // Variable de entorno para la ruta del wallet
+  db_name: 'g29cf7b31cc4ce0_test_high.adb.oraclecloud.com',
+  username: 'ADMIN',  // Tu nombre de usuario de Oracle
+  password: 'Ab@123456789',  // Tu contraseña de Oracle
+  connectionString: '(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-ashburn-1.oraclecloud.com))(connect_data=(service_name=g29cf7b31cc4ce0_test_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))',  // Connection string de Oracle
+  walletLocation: 'Wallet_test',  // Ruta a la ubicación del wallet
   pool: {
-    max: process.env.DB_POOL_MAX || 5, 
-    min: process.env.DB_POOL_MIN || 1,
-    acquire: process.env.DB_POOL_ACQUIRE || 30000,
-    idle: process.env.DB_POOL_IDLE || 10000
+    max: 5, 
+    min: 0,
+    acquire: 30000,
+    idle: 10000
   }
 };
 
-module.exports = env;
+module.exports = env;

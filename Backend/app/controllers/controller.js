@@ -14,7 +14,7 @@ exports.createProduct = (req, res) => {
 
     try {
         product.sku = req.body.sku;
-        product.product_name = req.body.product_name;  // CAMBIO AQUÍ
+        product.product_name = req.body.product_name;
         product.unit_price = req.body.unit_price;
         product.product_details = req.body.product_details;
         product.product_image = req.body.product_image;
@@ -28,7 +28,7 @@ exports.createProduct = (req, res) => {
 
         Product.create(product).then(result => {
             res.status(200).json({
-                message: "Producto creado con éxito con id = " + result.id,
+                message: "Producto creado con éxito con id = " + result.product_id,
                 product: result,
             });
         });
@@ -87,7 +87,7 @@ exports.updateProductById = async (req, res) => {
         } else {
             let updatedObject = {
                 sku: req.body.sku,
-                product_name: req.body.product_name,  // CAMBIO AQUÍ
+                product_name: req.body.product_name,
                 unit_price: req.body.unit_price,
                 product_details: req.body.product_details,
                 product_image: req.body.product_image,
@@ -99,7 +99,7 @@ exports.updateProductById = async (req, res) => {
                 department_id: req.body.department_id,
                 clothing_id: req.body.clothing_id
             };
-            let result = await Product.update(updatedObject, { returning: true, where: { id: productId } });
+            let result = await Product.update(updatedObject, { returning: true, where: { product_id: productId } });
 
             if (!result) {
                 res.status(500).json({
@@ -153,16 +153,15 @@ exports.createOrder = (req, res) => {
     try {
         order.customer_id = req.body.customer_id;
         order.amount = req.body.amount;
-        order.shipping_address = req.body.shipping_address;
         order.order_address = req.body.order_address;
         order.order_email = req.body.order_email;
-        order.order_date = req.body.order_date || new Date();
+        order.order_datetime = req.body.order_datetime || new Date();
         order.order_status = req.body.order_status;
         order.store_id = req.body.store_id;
 
         Order.create(order).then(result => {
             res.status(200).json({
-                message: "Pedido creado con éxito con id = " + result.id,
+                message: "Pedido creado con éxito con id = " + result.order_id,
                 order: result,
             });
         });
@@ -222,14 +221,13 @@ exports.updateOrderById = async (req, res) => {
             let updatedObject = {
                 customer_id: req.body.customer_id,
                 amount: req.body.amount,
-                shipping_address: req.body.shipping_address,
                 order_address: req.body.order_address,
                 order_email: req.body.order_email,
-                order_date: req.body.order_date || new Date(),
+                order_datetime: req.body.order_datetime || new Date(),
                 order_status: req.body.order_status,
                 store_id: req.body.store_id
             };
-            let result = await Order.update(updatedObject, { returning: true, where: { id: orderId } });
+            let result = await Order.update(updatedObject, { returning: true, where: { order_id: orderId } });
 
             if (!result) {
                 res.status(500).json({
@@ -288,7 +286,7 @@ exports.createOrderItem = (req, res) => {
 
         OrderItem.create(orderItem).then(result => {
             res.status(200).json({
-                message: "Detalle de pedido creado con éxito con id = " + result.id,
+                message: "Detalle de pedido creado con éxito con id = " + result.line_item_id,
                 orderItem: result,
             });
         });
@@ -351,7 +349,7 @@ exports.updateOrderItemById = async (req, res) => {
                 unit_price: req.body.unit_price,
                 quantity: req.body.quantity
             };
-            let result = await OrderItem.update(updatedObject, { returning: true, where: { id: orderItemId } });
+            let result = await OrderItem.update(updatedObject, { returning: true, where: { line_item_id: orderItemId } });
 
             if (!result) {
                 res.status(500).json({
@@ -398,98 +396,100 @@ exports.deleteOrderItemById = async (req, res) => {
     }
 };
 
-// Controladores para Customers
-exports.createCustomer = (req, res) => {
-    let customer = {};
-
+// Controladores para Customer
+exports.createCustomer = async (req, res) => {
     try {
-        customer.customer_email = req.body.customer_email;  // CAMBIO AQUÍ
-        customer.customer_name = req.body.customer_name;  // CAMBIO AQUÍ
-        customer.customer_phone = req.body.customer_phone;
-        customer.customer_address = req.body.customer_address;
-
-        Customer.create(customer).then(result => {
-            res.status(200).json({
-                message: "Cliente creado con éxito con id = " + result.id,
-                customer: result,
+        // Validar datos de entrada
+        const { full_name, email_address } = req.body;
+        if (!full_name || !email_address) {
+            return res.status(400).json({
+                message: "Faltan datos necesarios para crear el cliente (full_name o email_address)",
             });
+        }
+
+        // Crear cliente
+        const customer = await Customer.create({ full_name, email_address });
+        res.status(201).json({
+            message: "Cliente creado con éxito con id = " + customer.customer_id,
+            customer: customer,
         });
     } catch (error) {
         res.status(500).json({
-            message: "Error!",
+            message: "Error al crear el cliente",
             error: error.message
         });
     }
 };
 
-exports.GetAllCustomers = (req, res) => {
-    Customer.findAll()
-        .then(customerInfos => {
-            res.status(200).json({
-                message: "Clientes recuperados con éxito!",
-                customers: customerInfos
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
+exports.GetAllCustomers = async (req, res) => {
+    try {
+        const customers = await Customer.findAll();
+        res.status(200).json({
+            message: "Clientes recuperados con éxito",
+            customers: customers
         });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error al recuperar clientes",
+            error: error.message
+        });
+    }
 };
 
-exports.getCustomerById = (req, res) => {
-    let customerId = req.params.id;
-    Customer.findByPk(customerId)
-        .then(customer => {
-            res.status(200).json({
-                message: "Cliente recuperado con éxito con id = " + customerId,
-                customer: customer
+exports.getCustomerById = async (req, res) => {
+    try {
+        const customerId = req.params.id;
+        const customer = await Customer.findByPk(customerId);
+
+        if (!customer) {
+            return res.status(404).json({
+                message: "Cliente no encontrado con id = " + customerId,
             });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "Error!",
-                error: error
-            });
+        }
+
+        res.status(200).json({
+            message: "Cliente recuperado con éxito con id = " + customerId,
+            customer: customer
         });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error al recuperar el cliente",
+            error: error.message
+        });
+    }
 };
 
 exports.updateCustomerById = async (req, res) => {
     try {
-        let customerId = req.params.id;
-        let customer = await Customer.findByPk(customerId);
+        const customerId = req.params.id;
+        const { full_name, email_address } = req.body;
 
-        if (!customer) {
-            res.status(404).json({
-                message: "No se encontró el cliente para actualizar con id = " + customerId,
-                customer: "",
-                error: "404"
-            });
-        } else {
-            let updatedObject = {
-                customer_email: req.body.customer_email,  // CAMBIO AQUÍ
-                customer_name: req.body.customer_name,  // CAMBIO AQUÍ
-                customer_phone: req.body.customer_phone,
-                customer_address: req.body.customer_address
-            };
-            let result = await Customer.update(updatedObject, { returning: true, where: { id: customerId } });
-
-            if (!result) {
-                res.status(500).json({
-                    message: "Error -> No se puede actualizar el cliente con id = " + req.params.id,
-                    error: "No se pudo actualizar",
-                });
-            }
-
-            res.status(200).json({
-                message: "Cliente actualizado con éxito con id = " + customerId,
-                customer: updatedObject,
+        // Validar datos de entrada
+        if (!full_name || !email_address) {
+            return res.status(400).json({
+                message: "Faltan datos necesarios para actualizar el cliente (full_name o email_address)",
             });
         }
+
+        // Buscar y actualizar cliente
+        const [updatedRows, [updatedCustomer]] = await Customer.update(
+            { full_name, email_address },
+            { returning: true, where: { customer_id: customerId } }
+        );
+
+        if (!updatedRows) {
+            return res.status(404).json({
+                message: "No se encontró el cliente para actualizar con id = " + customerId,
+            });
+        }
+
+        res.status(200).json({
+            message: "Cliente actualizado con éxito con id = " + customerId,
+            customer: updatedCustomer,
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede actualizar el cliente con id = " + req.params.id,
+            message: "Error al actualizar el cliente",
             error: error.message
         });
     }
@@ -497,28 +497,28 @@ exports.updateCustomerById = async (req, res) => {
 
 exports.deleteCustomerById = async (req, res) => {
     try {
-        let customerId = req.params.id;
-        let customer = await Customer.findByPk(customerId);
+        const customerId = req.params.id;
+        const customer = await Customer.findByPk(customerId);
 
         if (!customer) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "No existe un cliente con id = " + customerId,
-                error: "404",
-            });
-        } else {
-            await customer.destroy();
-            res.status(200).json({
-                message: "Cliente eliminado con éxito con id = " + customerId,
-                customer: customer,
             });
         }
+
+        await customer.destroy();
+        res.status(200).json({
+            message: "Cliente eliminado con éxito con id = " + customerId,
+            customer: customer,
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error -> No se puede eliminar el cliente con id = " + req.params.id,
+            message: "Error al eliminar el cliente",
             error: error.message,
         });
     }
 };
+
 
 // Controladores para Clothing Lookup
 exports.createClothing = (req, res) => {
@@ -529,7 +529,7 @@ exports.createClothing = (req, res) => {
 
         ClothingLookup.create(clothing).then(result => {
             res.status(200).json({
-                message: "Artículo de ropa creado con éxito con id = " + result.id,
+                message: "Artículo de ropa creado con éxito con id = " + result.clothing_id,
                 clothing: result,
             });
         });
@@ -645,7 +645,7 @@ exports.createColor = (req, res) => {
 
         ColorLookup.create(color).then(result => {
             res.status(200).json({
-                message: "Color creado con éxito con id = " + result.id,
+                message: "Color creado con éxito con id = " + result.color_id,
                 color: result,
             });
         });
@@ -761,7 +761,7 @@ exports.createDepartment = (req, res) => {
 
         DepartmentLookup.create(department).then(result => {
             res.status(200).json({
-                message: "Departamento creado con éxito con id = " + result.id,
+                message: "Departamento creado con éxito con id = " + result.department_id,
                 department: result,
             });
         });
@@ -886,7 +886,7 @@ exports.createStore = (req, res) => {
 
         Store.create(store).then(result => {
             res.status(200).json({
-                message: "Tienda creada con éxito con id = " + result.id,
+                message: "Tienda creada con éxito con id = " + result.store_id,
                 store: result,
             });
         });

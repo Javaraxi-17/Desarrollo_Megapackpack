@@ -1,47 +1,74 @@
-// order_items.model.js
+// orderItems.model.js
 module.exports = (sequelize, Sequelize) => {
-    const OrderItem = sequelize.define('OrderItem', {
+  const OrderItem = sequelize.define(
+    "OrderItem",
+    {
       order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        field: 'order_id',
+        primaryKey: true,
+        field: 'ORDER_ID',
         references: {
-          model: 'orders',
-          key: 'id'
-        }
+          model: 'MGORDERS',
+          key: 'ORDER_ID'
+        },
+        onDelete: 'CASCADE',
+        comment: 'The order these products belong to'
       },
       line_item_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-        autoIncrement: true,
-        field: 'line_item_id'
+        field: 'LINE_ITEM_ID',
+        comment: 'An incrementing number, starting at one for each order'
       },
       product_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        field: 'product_id',
+        field: 'PRODUCT_ID',
         references: {
-          model: 'products',
-          key: 'id'
-        }
+          model: 'MGPRODUCTS',
+          key: 'PRODUCT_ID'
+        },
+        onDelete: 'CASCADE',
+        comment: 'Which item was purchased'
       },
       unit_price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
-        field: 'unit_price'
+        field: 'UNIT_PRICE',
+        comment: 'How much the customer paid for one item of the product'
       },
       quantity: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        field: 'quantity'
+        field: 'QUANTITY',
+        comment: 'How many items of this product the customer purchased'
       }
-    }, {
-      tableName: 'order_items',
-      schema: 'ADMIN',
-      timestamps: false
+    },
+    {
+      tableName: "MGORDER_ITEMS",
+      schema: "ADMIN",
+      timestamps: false,
+      comment: "Details of which products the customer has purchased in an order"
+    }
+  );
+
+  OrderItem.associate = function (models) {
+    OrderItem.belongsTo(models.Order, {
+      foreignKey: "order_id",
+      targetKey: "ORDER_ID",
+      onDelete: "CASCADE",
+      constraints: true
     });
-  
-    return OrderItem;
+
+    OrderItem.belongsTo(models.Product, {
+      foreignKey: "product_id",
+      targetKey: "PRODUCT_ID",
+      onDelete: "CASCADE",
+      constraints: true
+    });
   };
-  
+
+  return OrderItem;
+};
