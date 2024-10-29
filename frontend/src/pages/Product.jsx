@@ -71,9 +71,9 @@ const Product = () => {
           <button onClick={()=>addToCart(productData._id,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
           <hr className='mt-8 sm:w-4/5' />
           <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-              <p>100% Original product.</p>
-              <p>Cash on delivery is available on this product.</p>
-              <p>Easy return and exchange policy within 7 days.</p>
+              <p>100% Producto Original.</p>
+              <p>Reembolso disponible para este producto.</p>
+              <p>Aplican costos de envio.</p>
           </div>
         </div>
       </div>
@@ -81,12 +81,12 @@ const Product = () => {
       {/* ---------- Description & Review Section ------------- */}
       <div className='mt-20'>
         <div className='flex'>
-          <b className='border px-5 py-3 text-sm'>Description</b>
-          <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
+          <b className='border px-5 py-3 text-sm'>Descripcion</b>
+          <p className='border px-5 py-3 text-sm'>Reseñas (122)</p>
         </div>
         <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-          <p>An e-commerce website is an online platform that facilitates the buying and selling of products or services over the internet. It serves as a virtual marketplace where businesses and individuals can showcase their products, interact with customers, and conduct transactions without the need for a physical presence. E-commerce websites have gained immense popularity due to their convenience, accessibility, and the global reach they offer.</p>
-          <p>E-commerce websites typically display products or services along with detailed descriptions, images, prices, and any available variations (e.g., sizes, colors). Each product usually has its own dedicated page with relevant information.</p>
+          <p>La política de MegaPackPack establece que todos los productos están sujetos a disponibilidad y que los precios incluyen impuestos, actualizándose regularmente. Acepta métodos de pago variados y seguros, como tarjetas de crédito y débito, transferencias bancarias, y, en tienda física, pagos en efectivo. Ofrece envíos nacionales e internacionales con plazos variables según la ubicación del cliente, y cada pedido incluye un número de rastreo. </p>
+          <p>Las devoluciones y cambios están permitidos bajo condiciones específicas, generalmente dentro de 30 días y siempre que los productos estén en perfecto estado. Además, el servicio de atención al cliente está disponible para cualquier consulta o soporte relacionado con la compra, garantizando una experiencia de compra confiable y satisfactoria..</p>
         </div>
       </div>
 

@@ -15,9 +15,9 @@ const LatestCollection = () => {
   return (
     <div className='my-10'>
       <div className='text-center py-8 text-3xl'>
-          <Title text1={'LATEST'} text2={'COLLECTIONS'} />
+          <Title text1={'ULTIMOS'} text2={'PRODUCTOS'} />
           <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the.
+          ¡Explora y conoce lo ultimo en moda y diseño que hemos agregado recientemente en nuestras tiendas!
           </p>
       </div>
 
