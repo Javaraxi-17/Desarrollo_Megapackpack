@@ -16,10 +16,10 @@ const Contact = () => {
         <div className='flex flex-col justify-center items-start gap-6'>
           <p className='font-semibold text-xl text-gray-600'>Nuestra Tienda</p>
           <p className=' text-gray-500'>Zona 16 Calle 13 <br /> Conocenos en la capital de guatemala en nuestras diversas tiendas</p>
-          <p className=' text-gray-500'>Tel: (+502) 3392-5535<br /> Email: admin@forever.com</p>
+          <p className=' text-gray-500'>Tel: (+502) 5568-2638<br /> Email: admin@megapack.com</p>
           <p className='font-semibold text-xl text-gray-600'>Trabaja con nosotros</p>
-          <p className=' text-gray-500'>Aprende sobre nuestros trabajos y equipo.</p>
-          <button className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Explora trabajos</button>
+          <p className=' text-gray-500'>Aprende sobre nuestro enfoque y nuestra mision.</p>
+          <button className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Contactanos</button>
         </div>
       </div>
 
